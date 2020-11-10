@@ -136,9 +136,8 @@ class Algorithms:
 
         route = self.get_route(parent_node, end_node)
         elevation_dist, dropDist = self.get_Elevation(route, constants.ELEVATION_GAIN), self.get_Elevation(route, constants.ELEVATION_DROP)
-        self.best = [route[:], curr_distance, elevation_dist, dropDist]
 
-        return
+        return [route[:], curr_distance, elevation_dist, dropDist]
 
 
     def retrace_path(self, from_node, curr_node):
@@ -149,8 +148,8 @@ class Algorithms:
             curr_node = from_node[curr_node]
             total.append(curr_node)
         
-        self.best = [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP)]
-        return
+        return [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP)]
+
 
 
 
@@ -187,8 +186,8 @@ class Algorithms:
         while len(toEval):
             curr_node = min([(node,final_score[node]) for node in toEval], key=lambda t: t[1])[0]            
             if curr_node == end_node:
-                self.retrace_path(best_node, curr_node)
-                return
+                return self.retrace_path(best_node, curr_node)
+
             
             toEval.remove(curr_node)
             evaluated.add(curr_node)
@@ -212,6 +211,8 @@ class Algorithms:
                 costToStart[n] = pred_costToStart
                 costToStart1[n] = pred_costToStart1
                 final_score[n] = costToStart[n] + G.nodes[n]['dist_from_dest']*0.1
+        
+        return self.best
 
 
 
@@ -249,8 +250,8 @@ class Algorithms:
         if(x == 0):
             return shortestPathStats, shortestPathStats
 
-        self.dijkstra()
-        dijkstra_route = self.best
+        
+        dijkstra_route = self.dijkstra()
         if log:
             print()
             print("Dijkstra route statistics")
@@ -263,8 +264,8 @@ class Algorithms:
         else:
             self.best = [[], 0.0, float('inf'), float('-inf')]
 
-        self.a_star()
-        a_star_route = self.best
+        
+        a_star_route = self.a_star()
         if log:
             print()
             print("A star route statistics")
@@ -273,6 +274,22 @@ class Algorithms:
             print(a_star_route[3])
             print()
 
+        self.selectBestPath(dijkstra_route, a_star_route)
+
+        # If dijkstra or A-star doesn't return a shortest path based on elevation requirements
+        if (self.elev_type == constants.MAXIMIZE and self.best[2] == float('-inf')) or (self.elev_type == constants.MINIMIZE and self.best[3] == float('-inf')):            
+            return shortestPathStats, [[], 0.0, 0, 0]
+        
+        self.best[0] = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.best[0]]
+
+        # If the elevation path does not match the elevation requirements
+        if((self.elev_type == constants.MAXIMIZE and self.best[2] < shortestPathStats[2]) or (self.elev_type == constants.MINIMIZE and self.best[2] > shortestPathStats[2])):
+            self.best = shortestPathStats
+
+        return shortestPathStats, self.best
+
+
+    def selectBestPath(self,dijkstra_route, a_star_route, log=True):
         if self.elev_type == constants.MAXIMIZE:
             if (dijkstra_route[2] > a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]):
                 self.best = dijkstra_route
@@ -296,14 +313,3 @@ class Algorithms:
                     print("A star chosen as best route")
                     print()
 
-        # If dijkstra or A-star doesn't return a shortest path based on elevation requirements
-        if (self.elev_type == constants.MAXIMIZE and self.best[2] == float('-inf')) or (self.elev_type == constants.MINIMIZE and self.best[3] == float('-inf')):            
-            return shortestPathStats, [[], 0.0, 0, 0]
-        
-        self.best[0] = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.best[0]]
-
-        # If the elevation path does not match the elevation requirements
-        if((self.elev_type == constants.MAXIMIZE and self.best[2] < shortestPathStats[2]) or (self.elev_type == constants.MINIMIZE and self.best[2] > shortestPathStats[2])):
-            self.best = shortestPathStats
-
-        return shortestPathStats, self.best
