@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 import json
 from Elena.control.shortestPath import ShortestPath
 from Elena.control.settings import *
-from Elena.abstraction.abstraction import Graph_Abstraction
+from Elena.abstraction.abstraction import Graph_Loader
 
 
 
@@ -58,8 +58,8 @@ def get_data(startpt, endpt, x, min_max, log=True):
         print("Percent of Total path: ",x)
         print("Elevation: ",min_max)
     if not init:
-        abstract = Graph_Abstraction()
-        G = abstract.get_graph(endpt)
+        graph_loader = Graph_Loader()
+        G = graph_loader.get_graph(endpt)
         shortestPathObj = ShortestPath(G, x = x, elev_type = min_max)
         init = True
     

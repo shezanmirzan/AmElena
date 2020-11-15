@@ -4,16 +4,17 @@ from  Elena.control import constants
 from collections import deque, defaultdict
 from Elena.control.algorithms2 import Algorithms
 from heapq import *
+import logging
 
 
 class ShortestPath:
 
     def __init__(self, G, x = 0.0, elev_type = constants.MAXIMIZE):
-
+        self.logger = logging.getLogger(__name__)
         self.G = G
         self.elev_type = elev_type
         self.x = x
-        self.best = [[], 0.0, float('-inf'), 0.0]
+        self.best = [[], 0.0, float('-inf'), 0.0, constants.EMPTY]
         self.start_node= None
         self.end_node =None
 
@@ -26,21 +27,10 @@ class ShortestPath:
         self.elev_type = elev_type
         self.start_node, self.end_node = None, None
 
-        #self.best = [path, totalDist, totalElevGain, totalElevDrop]
-        if elev_type == constants.MAXIMIZE: 
-            self.best = [[], 0.0, float('-inf'), float('-inf')]
-        else:
-            self.best = [[], 0.0, float('inf'), float('-inf')]
-
         #get shortest path
         self.start_node, d1 = ox.get_nearest_node(G, point=startpt, return_dist = True)
         self.end_node, d2   = ox.get_nearest_node(G, point=endpt, return_dist = True)
-
-        
-        
-
-        
-        
+  
 
         # returns the shortest route from start to end based on distance
         self.shortest_route = nx.shortest_path(G, source=self.start_node, target=self.end_node, weight='length')
@@ -62,38 +52,21 @@ class ShortestPath:
 
         if(x == 0):
             return shortestPathStats, shortestPathStats
-
-       
-
-        
+    
+        self.resetBestPath()
         dijkstra_route = algorithms.dijkstra()
-        if log:
-            print()
-            print("Dijkstra route statistics")
-            print(dijkstra_route[1])
-            print(dijkstra_route[2])
-            print(dijkstra_route[3])
-
-        if elev_type == constants.MAXIMIZE: 
-            self.best = [[], 0.0, float('-inf'), float('-inf')]
-        else:
-            self.best = [[], 0.0, float('inf'), float('-inf')]
-
+        self.print_route_statistics(dijkstra_route)
         
+
+        self.resetBestPath()        
         a_star_route = algorithms.a_star()
-        if log:
-            print()
-            print("A star route statistics")
-            print(a_star_route[1])
-            print(a_star_route[2])
-            print(a_star_route[3])
-            print()
+        self.print_route_statistics(a_star_route)
 
         self.selectBestPath(dijkstra_route, a_star_route)
 
         # If dijkstra or A-star doesn't return a shortest path based on elevation requirements
         if (self.elev_type == constants.MAXIMIZE and self.best[2] == float('-inf')) or (self.elev_type == constants.MINIMIZE and self.best[3] == float('-inf')):            
-            return shortestPathStats, [[], 0.0, 0, 0]
+            return shortestPathStats, [[], 0.0, 0, 0, constants.EMPTY]
         
         self.best[0] = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.best[0]]
 
@@ -104,28 +77,27 @@ class ShortestPath:
         return shortestPathStats, self.best
 
     def selectBestPath(self,dijkstra_route, a_star_route, log=True):
+        
         if self.elev_type == constants.MAXIMIZE:
-            if (dijkstra_route[2] > a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]):
-                self.best = dijkstra_route
-                if log:
-                    print("Dijkstra chosen as best route")
-                    print()
-            else:
-                self.best = a_star_route
-                if log:
-                    print("A star chosen as best route")
-                    print()
+            self.best = dijkstra_route if (dijkstra_route[2] > a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]) else a_star_route
         else:
-            if (dijkstra_route[2] < a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]):
-                self.best = dijkstra_route
-                if log:
-                    print("Dijkstra chosen as best route")
-                    print()
-            else:
-                self.best = a_star_route
-                if log:
-                    print("A star chosen as best route")
-                    print()
+            self.best = dijkstra_route if (dijkstra_route[2] < a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]) else a_star_route
+
+        self.logger.info("Best selected route is " + self.best[4])
+
+    def resetBestPath(self):
+        if self.elev_type == constants.MAXIMIZE: 
+            self.best = [[], 0.0, float('-inf'), float('-inf'), constants.EMPTY]
+        else:
+            self.best = [[], 0.0, float('inf'), float('-inf'), constants.EMPTY]
+    
+    def print_route_statistics(self, route):
+        print("************************************************")
+        print("Algorithm :" + route[4])
+        print("Total Distance: " + str(route[1]))
+        print("Elevation Gain: " + str(route[2]))
+        print("Elevation Drop: " + str(route[3]))
+
 
     
 

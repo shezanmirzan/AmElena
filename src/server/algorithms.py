@@ -10,16 +10,14 @@ class Algorithms:
         self.G = G
         self.elev_type = elev_type
         self.x = x
-        self.best = [[], 0.0, float('-inf'), 0.0]
+        self.best = [[], 0.0, float('-inf'), float('-inf'), constants.EMPTY]
         self.start_node= start_node
         self.end_node =end_node
         self.shortest_dist = shortest_dist
 
-        if elev_type == constants.MAXIMIZE: 
-            self.best = [[], 0.0, float('-inf'), float('-inf')]
-        else:
-            self.best = [[], 0.0, float('inf'), float('-inf')]
-        print("Algorithm init succesful")
+        if elev_type == constants.MINIMIZE: 
+            self.best[2] = float('inf')
+
 
     def reload(self, G):
         # Reinitialize with modified G
@@ -34,17 +32,17 @@ class Algorithms:
             return 
         if cost_type == constants.NORMAL:
             try : 
-                return G.edges[node1, node2 ,0]["length"]
+                return G.edges[node1, node2 ,0][constants.LENGTH]
             except : 
-                return G.edges[node1, node2]["weight"]
+                return G.edges[node1, node2][constants.WEIGHT]
         elif cost_type == constants.ELEVATION_DIFFERENCE:
-            return G.nodes[node2]["elevation"] - G.nodes[node1]["elevation"]
+            return G.nodes[node2][constants.ELEVATION] - G.nodes[node1][constants.ELEVATION]
         elif cost_type == constants.ELEVATION_GAIN:
-            return max(0.0, G.nodes[node2]["elevation"] - G.nodes[node1]["elevation"])
+            return max(0.0, G.nodes[node2][constants.ELEVATION] - G.nodes[node1][constants.ELEVATION])
         elif cost_type == constants.ELEVATION_DROP:
-            return max(0.0, G.nodes[node1]["elevation"] - G.nodes[node2]["elevation"])
+            return max(0.0, G.nodes[node1][constants.ELEVATION] - G.nodes[node2][constants.ELEVATION])
         else:
-            return abs(G.nodes[node1]["elevation"] - G.nodes[node2]["elevation"])
+            return abs(G.nodes[node1][constants.ELEVATION] - G.nodes[node2][constants.ELEVATION])
         
 
 
@@ -93,8 +91,6 @@ class Algorithms:
     # Run the dijkstra algorithm
     def dijkstra(self):
             #Implements Dijkstra's Algorithm
-
-        print("Implementing Djisktra")
         
         if not self.check_nodes() : 
             return
@@ -146,7 +142,7 @@ class Algorithms:
         route = self.get_route(parent_node, end_node)
         elevation_dist, dropDist = self.get_Elevation(route, constants.ELEVATION_GAIN), self.get_Elevation(route, constants.ELEVATION_DROP)
 
-        return [route[:], curr_distance, elevation_dist, dropDist]
+        return [route[:], curr_distance, elevation_dist, dropDist, constants.DJIKSTRA]
 
 
     def retrace_path(self, from_node, curr_node):
@@ -157,7 +153,7 @@ class Algorithms:
             curr_node = from_node[curr_node]
             total.append(curr_node)
         
-        return [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP)]
+        return [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP), constants.A_STAR]
 
 
 
@@ -190,7 +186,7 @@ class Algorithms:
             costToStart1[node] = float("inf")
         costToStart1[start_node] = 0
 
-        final_score[start_node] = G.nodes[start_node]['dist_from_dest']*0.1
+        final_score[start_node] = G.nodes[start_node][constants.DESTINATION_DISTANCE]*0.1
         
         while len(toEval):
             curr_node = min([(node,final_score[node]) for node in toEval], key=lambda t: t[1])[0]            
@@ -219,7 +215,7 @@ class Algorithms:
                 best_node[n] = curr_node
                 costToStart[n] = pred_costToStart
                 costToStart1[n] = pred_costToStart1
-                final_score[n] = costToStart[n] + G.nodes[n]['dist_from_dest']*0.1
+                final_score[n] = costToStart[n] + G.nodes[n][constants.DESTINATION_DISTANCE]*0.1
         
         return self.best
 
