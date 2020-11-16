@@ -1,6 +1,6 @@
 import osmnx as ox
 import networkx as nx
-from  Elena.control import constants
+from  AmElena.server import constants
 from collections import deque, defaultdict
 from heapq import *
 
@@ -18,11 +18,9 @@ class Algorithms:
         if elev_type == constants.MINIMIZE: 
             self.best[2] = float('inf')
 
-
     def reload(self, G):
         # Reinitialize with modified G
         self.G = G
-
 
     def get_cost(self, node1, node2, cost_type = constants.NORMAL):
         
@@ -43,8 +41,6 @@ class Algorithms:
             return max(0.0, G.nodes[node1][constants.ELEVATION] - G.nodes[node2][constants.ELEVATION])
         else:
             return abs(G.nodes[node1][constants.ELEVATION] - G.nodes[node2][constants.ELEVATION])
-        
-
 
     def get_Elevation(self, route, cost_type = constants.BOTH, isPiecewise = False):
         # Compute total cost or piecewise cost for a given route
@@ -68,8 +64,6 @@ class Algorithms:
         else:
             return total
 
-    
-
     def get_route(self, parent_node, dest):
         "returns the path given a parent mapping and the final dest"
         path = [dest]
@@ -79,14 +73,11 @@ class Algorithms:
             curr = parent_node[curr]
         return path[::-1]
 
-
     def check_nodes(self):
         # Checks if start or end nodes are None values
         if self.start_node is None or self.end_node is None:
             return False
         return True
-
-
 
     # Run the dijkstra algorithm
     def dijkstra(self):
@@ -144,7 +135,6 @@ class Algorithms:
 
         return [route[:], curr_distance, elevation_dist, dropDist, constants.DJIKSTRA]
 
-
     def retrace_path(self, from_node, curr_node):
         # Reconstructs the path and plots it.
         if not from_node or not curr_node : return
@@ -155,9 +145,6 @@ class Algorithms:
         
         return [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP), constants.A_STAR]
 
-
-
-
     def a_star(self):
         # Implements A* algorithm for calculating distances. 
         evaluated = set() #evaluated node set      
@@ -166,7 +153,6 @@ class Algorithms:
         costToStart = {} # cost of node to start node
         costToStart1 = {}
         final_score = {} # dist between start node and end node thru a particular node
-
 
         if not self.check_nodes() : 
             return
@@ -218,4 +204,3 @@ class Algorithms:
                 final_score[n] = costToStart[n] + G.nodes[n][constants.DESTINATION_DISTANCE]*0.1
         
         return self.best
-

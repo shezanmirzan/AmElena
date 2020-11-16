@@ -1,10 +1,9 @@
 import osmnx as ox
-import networkx as nx
 import os
 import numpy as np
 import pickle as p
-from Elena.abstraction.config import API
-from  Elena.control import constants
+from AmElena.server.constants import API
+from  AmElena.server import constants
 import logging
 
 class Graph_Loader:
@@ -49,7 +48,6 @@ class Graph_Loader:
             long2=G.nodes[node]['x']
             distance=self.dist_nodes(lat1,long1,lat2,long2)            
             data[constants.DESTINATION_DISTANCE] = distance
-            
         return G
 
     def get_graph(self, endpt):    
@@ -60,7 +58,6 @@ class Graph_Loader:
 
         self.G = self.update_endPoint_distance(self.G,endpt)
         return self.G
-
  
     def download_Map(self, endpt):  
         #Returns elevation data with the graph.
@@ -72,6 +69,3 @@ class Graph_Loader:
         p.dump( self.G, open( constants.CACHED_MAP_FILENAME, "wb" ) )
         self.cached = True
         self.logger.info("The Graph has been saved")
-
-    
-    

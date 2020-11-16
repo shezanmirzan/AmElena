@@ -1,8 +1,8 @@
 import osmnx as ox
 import networkx as nx
-from  Elena.control import constants
+from  AmElena.server import constants
 from collections import deque, defaultdict
-from Elena.control.algorithms2 import Algorithms
+from AmElena.server.algoritms import Algorithms
 from heapq import *
 import logging
 
@@ -97,7 +97,3 @@ class ShortestPath:
         print("Total Distance: " + str(route[1]))
         print("Elevation Gain: " + str(route[2]))
         print("Elevation Drop: " + str(route[3]))
-
-
-    
-

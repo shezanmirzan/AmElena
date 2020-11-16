@@ -18,6 +18,8 @@ BOTH = "both"
 
 #API-Key constants
 GOOGLEAPIKEY = "googleapikey"
+API={}
+API['googleapikey']="AIzaSyCJgTZU8StpSFsIulOvO40iF684-g6m4IA"
 
 
 #Cached Map Name
@@ -33,3 +35,6 @@ LENGTH = 'length'
 EMPTY = "empty"
 DJIKSTRA = "djikstra"
 A_STAR = "A-star"
+
+## API-Key
+API_KEY = 'pk.eyJ1Ijoia2V2aW5qb3NlcGgxOTk1IiwiYSI6ImNqbzUxc2kwaDAybm4zanRjdm9mbndqZW8ifQ.wdJv5gB84BWVy1dAoNN6ew'
