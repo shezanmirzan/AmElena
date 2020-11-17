@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, session, g, request, url_for, flash, redirect, abort, render_template
 from geopy.geocoders import Nominatim
 import json
-from Elena.control.shortestPath import ShortestPath
-from Elena.control.settings import *
-from Elena.abstraction.abstraction import Graph_Loader
+from src.server.shortestPath import ShortestPath
+from src.server.constants import *
+from src.server.abstraction import Graph_Loader
 
 app = Flask(__name__, static_url_path='', static_folder="../client/static", template_folder="../client/templates")
 app.config.from_object(__name__)
