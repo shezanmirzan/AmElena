@@ -122,3 +122,15 @@ def get_route():
     route_data = get_data((data['start_location']['lat'], data['start_location']['lng']),
                           (data['end_location']['lat'], data['end_location']['lng']), data['x'], data['min_max'])
     return json.dumps(route_data)
+
+@app.route('/route_address', methods=['POST'])
+def get_routes_via_address():
+    data = request.get_json(force=True)
+    print(data['start_address'])
+    print(data['end_address'])
+    print(data)
+    # data will be following format: {'start_address': 'Hello', 'x': '0', 'end_address': 'World', 'min_max': 'minimize'}
+    # TODO: Need to update this for calculating routes via addresses
+    route_data = {}
+
+    return json.dumps(route_data)
