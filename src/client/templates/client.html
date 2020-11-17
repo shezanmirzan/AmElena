@@ -347,13 +347,16 @@
                 var x = document.getElementById("map_or_address");
                     if (x.innerHTML === "Select Map") {
                         x.innerHTML = "Type Address";
-                        document.getElementById("text_start_address").disabled = true;
-                        document.getElementById("text_end_address").disabled = true;
+                        setVisibilityOfAddressTexts(true);
                     } else {
                         x.innerHTML = "Select Map";
-                        document.getElementById("text_start_address").disabled = false;
-                        document.getElementById("text_end_address").disabled = false;
+                        setVisibilityOfAddressTexts(false);
                     }
+            }
+
+            function setVisibilityOfAddressTexts(disabled){
+              document.getElementById("text_start_address").disabled = disabled;
+              document.getElementById("text_end_address").disabled = disabled;
             }
 
 
@@ -437,7 +440,7 @@
             document.getElementById("text_end_address").addEventListener('input',setCalculateVisibilityOnAddresses);
 
             function setCalculateVisibilityOnAddresses(e){
-              console.log("Invoking this function on input event");
+              // console.log("Invoking this function on input event");
               var start_address = document.getElementById("text_start_address").value.toString();
               var end_address = document.getElementById("text_end_address").value.toString();
 
@@ -617,8 +620,7 @@
                     "min_max": checkedValue.toString()
                   }
                   input_data = JSON.stringify(input_data);
-                  // var input_data = '{"start_address":'+document.getElementById("text_start_address").value+',"x":'+document.getElementById('x').value+',"end_address":'+document.getElementById("text_end_address").value+',"min_max":"'+checkedValue.toString()+'"}';
-                  console.log("Address type input: " + input_data);
+
                   $('#loading').show();
                   $.ajax({
                     type: "POST",
