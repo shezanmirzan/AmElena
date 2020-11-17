@@ -5,24 +5,24 @@ from collections import deque, defaultdict
 from heapq import *
 
 class Algorithms:
-    def __init__(self, G, shortest_dist, x = 0.0, elev_type = constants.MAXIMIZE, start_node = None, end_node = None):
+    def __init__(self, G, shortest_dist, thresh = 0.0, elev_type = constants.MAXIMIZE, start_node = None, end_node = None):
 
         self.G = G
         self.elev_type = elev_type
-        self.x = x
-        self.best = [[], 0.0, float('-inf'), float('-inf'), constants.EMPTY]
+        self.thresh = thresh
+        self.optimal_path = [[], 0.0, float('-inf'), float('-inf'), constants.EMPTY]
         self.start_node= start_node
         self.end_node =end_node
         self.shortest_dist = shortest_dist
 
         if elev_type == constants.MINIMIZE:
-            self.best[2] = float('inf')
+            self.optimal_path[2] = float('inf')
 
     def reload(self, G):
         # Reinitialize with modified G
         self.G = G
 
-    def get_cost(self, node1, node2, cost_type = constants.NORMAL):
+    def get_edge_weight(self, node1, node2, cost_type = constants.NORMAL):
 
         # Compute cost between two given nodes node1, node2 with the given cost_type .
         G = self.G
@@ -42,20 +42,20 @@ class Algorithms:
         else:
             return abs(G.nodes[node1][constants.ELEVATION] - G.nodes[node2][constants.ELEVATION])
 
-    def get_Elevation(self, route, cost_type = constants.BOTH, isPiecewise = False):
+    def get_path_weight(self, route, cost_type = constants.BOTH, isPiecewise = False):
         # Compute total cost or piecewise cost for a given route
         total = 0
         if isPiecewise :
             piece_elevation = []
         for i in range(len(route)-1):
             if cost_type == constants.BOTH:
-                diff = self.get_cost(route[i],route[i+1],constants.ELEVATION_DIFFERENCE)
+                diff = self.get_edge_weight(route[i],route[i+1],constants.ELEVATION_DIFFERENCE)
             elif cost_type == constants.ELEVATION_GAIN:
-                diff = self.get_cost(route[i],route[i+1],constants.ELEVATION_GAIN)
+                diff = self.get_edge_weight(route[i],route[i+1],constants.ELEVATION_GAIN)
             elif cost_type == constants.ELEVATION_DROP:
-                diff = self.get_cost(route[i],route[i+1],constants.ELEVATION_DROP)
+                diff = self.get_edge_weight(route[i],route[i+1],constants.ELEVATION_DROP)
             elif cost_type == constants.NORMAL:
-                diff = self.get_cost(route[i],route[i+1],constants.NORMAL)
+                diff = self.get_edge_weight(route[i],route[i+1],constants.NORMAL)
             total += diff
             if isPiecewise :
                 piece_elevation.append(diff)
@@ -85,7 +85,7 @@ class Algorithms:
 
         if not self.check_nodes() :
             return
-        G, x, shortest, elev_type = self.G, self.x, self.shortest_dist, self.elev_type
+        G, thresh, shortest, elev_type = self.G, self.thresh, self.shortest_dist, self.elev_type
         start_node, end_node = self.start_node, self.end_node
 
         temp = [(0.0, 0.0, start_node)]
@@ -107,22 +107,22 @@ class Algorithms:
                         continue
 
                     prev = prior_info.get(n, None) # get past priority of the node
-                    edge_len = self.get_cost(curr_node, n, constants.NORMAL)
+                    edge_len = self.get_edge_weight(curr_node, n, constants.NORMAL)
 
                     # Update distance btw the nodes depending on maximize(subtract) or minimize elevation(add)
                     if elev_type == constants.MAXIMIZE:
-                        if x <= 0.5:
-                            nxt = edge_len*0.1 + self.get_cost(curr_node, n, constants.ELEVATION_DROP)
+                        if thresh <= 0.5:
+                            nxt = edge_len*0.1 + self.get_edge_weight(curr_node, n, constants.ELEVATION_DROP)
                             nxt += curr_priority
                         else:
-                            nxt = (edge_len*0.1 - self.get_cost(curr_node, n, constants.ELEVATION_DIFFERENCE))* edge_len*0.1
+                            nxt = (edge_len*0.1 - self.get_edge_weight(curr_node, n, constants.ELEVATION_DIFFERENCE))* edge_len*0.1
                     else:
-                        nxt = edge_len*0.1 + self.get_cost(curr_node, n, constants.ELEVATION_GAIN)
+                        nxt = edge_len*0.1 + self.get_edge_weight(curr_node, n, constants.ELEVATION_GAIN)
                         nxt += curr_priority
 
                     nxt_distance = curr_distance + edge_len
 
-                    if nxt_distance <= shortest*(1.0+x) and (prev is None or nxt < prev):
+                    if nxt_distance <= shortest*(1.0+thresh) and (prev is None or nxt < prev):
                         parent_node[n] = curr_node
                         prior_info[n] = nxt
                         heappush(temp, (nxt, nxt_distance, n))
@@ -131,7 +131,7 @@ class Algorithms:
             return
 
         route = self.get_route(parent_node, end_node)
-        elevation_dist, dropDist = self.get_Elevation(route, constants.ELEVATION_GAIN), self.get_Elevation(route, constants.ELEVATION_DROP)
+        elevation_dist, dropDist = self.get_path_weight(route, constants.ELEVATION_GAIN), self.get_path_weight(route, constants.ELEVATION_DROP)
 
         return [route[:], curr_distance, elevation_dist, dropDist, constants.DJIKSTRA]
 
@@ -143,7 +143,7 @@ class Algorithms:
             curr_node = from_node[curr_node]
             total.append(curr_node)
 
-        return [total[:], self.get_Elevation(total, constants.NORMAL), self.get_Elevation(total, constants.ELEVATION_GAIN), self.get_Elevation(total, constants.ELEVATION_DROP), constants.A_STAR]
+        return [total[:], self.get_path_weight(total, constants.NORMAL), self.get_path_weight(total, constants.ELEVATION_GAIN), self.get_path_weight(total, constants.ELEVATION_DROP), constants.A_STAR]
 
     def a_star(self):
         # Implements A* algorithm for calculating distances.
@@ -157,7 +157,7 @@ class Algorithms:
         if not self.check_nodes() :
             return
         G, min_dist = self.G, self.shortest_dist
-        x, elev_type = self.x, self.elev_type
+        thresh, elev_type = self.thresh, self.elev_type
         start_node= self.start_node
         end_node = self.end_node
 
@@ -186,16 +186,16 @@ class Algorithms:
                 if n in evaluated:
                     continue
                 if elev_type == constants.MINIMIZE:
-                    pred_costToStart = costToStart[curr_node] + self.get_cost(curr_node, n, constants.ELEVATION_GAIN)
+                    pred_costToStart = costToStart[curr_node] + self.get_edge_weight(curr_node, n, constants.ELEVATION_GAIN)
                 elif elev_type == constants.MAXIMIZE:
-                    pred_costToStart = costToStart[curr_node] + self.get_cost(curr_node, n, constants.ELEVATION_DROP)
+                    pred_costToStart = costToStart[curr_node] + self.get_edge_weight(curr_node, n, constants.ELEVATION_DROP)
 
-                pred_costToStart1 = costToStart1[curr_node] + self.get_cost(curr_node, n, constants.NORMAL)
+                pred_costToStart1 = costToStart1[curr_node] + self.get_edge_weight(curr_node, n, constants.NORMAL)
 
-                if n not in toEval and pred_costToStart1<=(1+x)*min_dist:# Discover a new node
+                if n not in toEval and pred_costToStart1<=(1+thresh)*min_dist:# Discover a new node
                     toEval.add(n)
                 else:
-                    if (pred_costToStart >= costToStart[n]) or (pred_costToStart1>=(1+x)*min_dist):
+                    if (pred_costToStart >= costToStart[n]) or (pred_costToStart1>=(1+thresh)*min_dist):
                         continue
 
                 best_node[n] = curr_node
@@ -203,4 +203,4 @@ class Algorithms:
                 costToStart1[n] = pred_costToStart1
                 final_score[n] = costToStart[n] + G.nodes[n][constants.DESTINATION_DISTANCE]*0.1
 
-        return self.best
+        return self.optimal_path

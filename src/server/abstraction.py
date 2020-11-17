@@ -56,10 +56,7 @@ class Graph_Loader:
         latitude_source, longitude_source = np.radians(latitude_source), np.radians(longitude_source)
         latitude_destination, longitude_destination = np.radians(latitude_destination),np.radians(longitude_destination)
 
-        delta_longitude = longitude_destination - longitude_source
-        delta_latitude = latitude_destination - latitude_source
-
-        a = np.sin(delta_latitude / 2)**2 + np.cos(latitude_source) * np.cos(latitude_destination) * np.sin(delta_longitude / 2)**2
+        a = np.sin((latitude_destination - latitude_source) / 2)**2 + np.cos(latitude_source) * np.cos(latitude_destination) * np.sin((longitude_destination - longitude_source) / 2)**2
 
         radius=6371008.8 # Earth radius
         return radius * 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
