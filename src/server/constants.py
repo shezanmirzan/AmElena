@@ -38,3 +38,7 @@ A_STAR = "A-star"
 
 ## API-Key
 API_KEY = 'pk.eyJ1Ijoia2V2aW5qb3NlcGgxOTk1IiwiYSI6ImNqbzUxc2kwaDAybm4zanRjdm9mbndqZW8ifQ.wdJv5gB84BWVy1dAoNN6ew'
+
+#X-Y Coordinates
+X_COORDINATE = 'x'
+Y_COORDINATE = 'y'
