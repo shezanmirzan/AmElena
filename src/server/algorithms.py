@@ -26,7 +26,7 @@ class Algorithms:
     def get_edge_weight(self, node1, node2, weight_attribute = constants.NORMAL):
 
         # Compute cost between two given nodes node1, node2 with the given weight_attribute .
-        
+
         G = self.G
 
         if node1 is None or node2 is None :
@@ -214,7 +214,7 @@ class Algorithms:
                 if n not in unvisited and pred_path_score1<=(1+thresh)*shortest_path_weight: # Discover a new node
                     unvisited.add(n)
                 else:
-                    if (pred_path_score >= path_score[n]) or (pred_path_score1>=(1+thresh)*min_dist):
+                    if (pred_path_score >= path_score[n]) or (pred_path_score1>=(1+thresh)*shortest_path_weight):
                         continue
 
                 parent_dict[n] = this_node
