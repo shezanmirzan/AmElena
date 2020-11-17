@@ -1,4 +1,4 @@
-<!-- templates/client.html -->
+<!-- templates/presentation.html -->
 <html>
     <head>
         <meta charset='utf-8' />
@@ -27,10 +27,10 @@
                 position: relative;
                 margin: 0px auto;
                 border: none;
-                border-radius: 3px;                
+                border-radius: 3px;
                 color: #222;
-                
-            } 
+
+            }
             .sidenav0 {
                 height: 100%;
                 width: 22%;
@@ -38,11 +38,11 @@
                 z-index: 1;
                 top: 7.5%;
                 left: 0;
-                background-color:#7fb5d4;
+                background-color:#747272;
                 overflow-x: hidden;
                 padding-top: 5px;
             }
-            
+
             .sidenav {
                 height: 7.5%;
                 width: 100%;
@@ -50,10 +50,10 @@
                 z-index: 1;
                 top: 0;
                 left: 0;
-                background-color:#7fb5d4;
+                background-color:#747272;
                 overflow-x: hidden;
                 padding-top: 5px;
-                
+
             }
             .sidenav2 {
                 height: 7.5%;
@@ -62,35 +62,35 @@
                 z-index: 1;
                 top: 0;
                 left: 370;
-                background-color:#7fb5d4;
+                background-color:#747272;
                 overflow-x: hidden;
                 padding-top: 5px;
-                
+
             }
 
             .infonav {
                 height: 50%;
-                width: 22   %;
+                width: 22%;
                 position: fixed;
                 z-index: 1;
                 left: 0;
                 top: 50%;
                 /* right: 10; */
-                background-color:#7fb5d4;
+                background-color:#747272;
                 overflow-x: visible;
                 padding-top: 5px;
-                
-            } 
-            
+
+            }
+
             .msg {
                 /* display: block; */
                 position: relative;
                 margin: 0px auto;
                 border: none;
-                border-radius: 3px;                
+                border-radius: 3px;
                 color: #222;
-                
-            }   
+
+            }
             .button {
                 position: relative;;
                 background-color: grey; /* Green */
@@ -98,9 +98,9 @@
                 color: whitesmoke;
                 padding: 15px 32px;
                 text-align: center;
-                
-                
-            } 
+
+
+            }
             .button:active:enabled {
                 background-color: #3a3a42;
                 box-shadow: 0 5px #666;
@@ -118,7 +118,7 @@
                 background-color: #fff;
                 z-index: 99;
                 text-align: center;
-            }    
+            }
             #loading-image {
                 z-index: 100;
                 position: fixed; /* or absolute */
@@ -128,41 +128,68 @@
 
             .logo{
                 position: fixed;
-                height:50px; 
-                width: 130px; 
-                top:5px; 
-                left:20px; 
+                height:50px;
+                width: 130px;
+                top:5px;
+                left:20px;
                 padding: 1px;
             }
 
             .start_add{
-                width: 130px; 
+                width: 130px;
                 top:100px;
-                position: fixed; 
-                height: 90%; 
-                left: 10px; 
+                position: fixed;
+                height: 90%;
+                left: 10px;
                 padding: 1px
             }
             .end_add{
-                width: 130px; 
+                width: 130px;
                 top:170px;
-                position: fixed; 
-                height: 90%; 
-                left: 10px; 
+                position: fixed;
+                height: 90%;
+                left: 10px;
                 padding: 1px
             }
             .thres{
-                width: 130px; 
+                width: 130px;
                 top:250px;
-                position: fixed; 
-                height: 90%; 
-                left: 20px; 
+                position: fixed;
+                height: 90%;
+                left: 20px;
                 padding: 1px
             }
 
+
+            .map_or_address-button {
+                position: relative;
+                top: 30%;
+                left: 1%;
+                display: inline-block;
+                padding: 2px;
+                min-width: 100px;
+                height: 24px;
+                text-align: center;
+                text-overflow: ellipsis;
+                text-transform: uppercase;
+                color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+                background-color: rgb(var(--pure-material-primary-rgb, 51, 51, 51));
+                font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+                box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 16px;
+                overflow: hidden;
+                outline: none;
+                cursor: pointer;
+                transition: box-shadow 0.2s;
+                box-sizing: border-box;
+                border: none;
+            }
+
             .reset-button {
-                position: fixed; 
-                top: 370px; 
+                position: fixed;
+                top: 370px;
                 left: 20px;
                 display: inline-block;
                 padding: 2px;
@@ -187,8 +214,8 @@
             }
 
             .calculate-button {
-                position: fixed; 
-                top: 370px; 
+                position: fixed;
+                top: 370px;
                 left: 150px;
                 display: inline-block;
                 padding: 2px;
@@ -235,14 +262,28 @@
             <div id="map"></div>
         </div>
 
-        
+
+        <div class="sidenav">
+            <img id="logo" src= "Elena-one.png" alt="Logo" class="logo" />
+            <br>
+            <button id="map_or_address" class="map_or_address-button">Select Map</button>
+            <!-- <input type="checkbox" id="map_or_address" name="map_or_address" value="address" style="position: relative; top: 40%; left: 0.5%; padding: 1px">
+            <label for="map_or_address" style="position: relative; top: 40%; left: 0.5%; padding: 1px" > Type start and end address</label><br> -->
+            <!-- <input type="radio" name="map1" class="check" style="position: relative; top: 50%; left: 0%; padding: 1px" value="map" checked>
+            <label for="map1" style="position: relative; top: 50%; left: 0%; padding: 1px"> Select on map </label>
+            <input type="radio" name="map2" class="check" style="position: relative; top: 50%; left: 3%; padding: 1px" value="address">
+            <label for="map2" style="position: relative; top: 50%; left: 3%; padding: 1px"> Type Address </label> -->
+
+        </div>
+
         <div class="sidenav0">
             <label for="start_address" class="start_add">&nbsp; Start Address &nbsp;&nbsp;</label>
             <input type="text" id="text_start_address" name="start_address" placeholder="eg. UMass Amherst" style="width: 250px; height: 30px; position: fixed; left: 17px; top:120; padding: 1px; border: none;">
             <label for="end_address" class="end_add">&nbsp; End Address &nbsp;&nbsp;</label>
             <input type="text" id="text_end_address" name="start_address" placeholder="eg. UMass Amherst" style="width: 250px; height: 30px; position: fixed; left: 17px; top:190; padding: 1px; border: none;">
             <label for="threshold" class="thres">Elevation max path limit (x%) &nbsp;&nbsp;</label>
-            <input type="number" id="x" min="0" name="threshold" value=0 style="width: 115px; height: 30px; position: fixed; left: 150px; top:255; padding: 1px; text-align: center; border: none;">            <input type="radio" name="skill1" class="check" style="position: fixed; top:300px; left: 20px; padding: 1px" value="minimize" checked> 
+            <input type="number" id="x" min="0" name="threshold" value=0 style="width: 115px; height: 30px; position: fixed; left: 150px; top:255; padding: 1px; text-align: center; border: none;">
+            <input type="radio" name="skill1" class="check" style="position: fixed; top:300px; left: 20px; padding: 1px" value="minimize" checked>
             <label for="skill1" style="position: fixed; top:300px; left: 40px; padding: 1px"> Minimize Elevation </label>
             <input type="radio" name="skill2" style="position: fixed; top:320px; left: 20px; padding: 1px" class="check" value="maximize">
             <label for="skill2" style="position: fixed; top:320px; left: 40px; padding: 1px"> Maximize Elevation </label>
@@ -250,52 +291,51 @@
             <button id="calc_route" class="calculate-button" disabled>Calculate</button>
         </div>
 
-        <div class="sidenav">
-            <img id="logo" src= "Elena-one.png" alt="Logo" class="logo" />
-        </div>
-
-        <div class="sidenav2">            
-            <label style="position: fixed; top: 9px; left: 660px; padding: 1px; color: #B01F00">Elena:</label>
+        <div class="sidenav2">
+            <label style="position: fixed; top: 9px; left: 660px; padding: 1px; color: yellowgreen">Elena:</label>
             <hr style="position: fixed; top: 23px; left: 645px; width: 600px; border-bottom: 1px solid #8A8888;">
-            <label style="position: fixed; top: 37px; left: 650px; padding: 1px; color: green">Shortest:</label>
+            <label style="position: fixed; top: 37px; left: 650px; padding: 1px; color: yellow">Shortest:</label>
             <!-- <div style="border-right: 1px solid #8A8888; height: 54px; position: absolute; left: 720px"></div> -->
-            
-            <label style="position: fixed; top: 9px; left: 730px; padding: 1px; color: #B01F00">Gain: </label>
-            <div id="gain_1" style="position: fixed; top: 9px; left: 775px; padding: 1px; color: #B01F00"></div>
-            
-            <label style="position: fixed; top: 37px; left: 730px; padding: 1px; color: green">Gain: </label>
-            <div id="gain_2" style="position: fixed; top: 37px; left: 775px; padding: 1px; color: green"></div>
-            
-            <label style="position: fixed; top: 9px; left: 850px; padding: 1px; color: #B01F00">Drop: </label>
-            <div id="drop_1" style="position: fixed; top: 9px; left: 895px; padding: 1px; color: #B01F00"></div>
-            
-            <label style="position: fixed; top: 37px; left: 850px; padding: 1px; color: green">Drop: </label>
-            <div id="drop_2" style="position: fixed; top: 37px; left: 895px; padding: 1px; color: green"></div>
-            
-            <label style="position: fixed; top: 9px; left: 980px; padding: 1px; color: #B01F00">Distance: </label>
-            <div id="dist_1" style="position: fixed; top: 9px; left: 1055px; padding: 1px; color: #B01F00"></div>
-            
-            <label style="position: fixed; top: 37px; left: 980px; padding: 1px; color: green">Distance: </label>
-            <div id="dist_2" style="position: fixed; top: 37px; left: 1055px; padding: 1px; color: green"></div>
-            
+
+            <label style="position: fixed; top: 9px; left: 730px; padding: 1px; color:yellowgreen">Gain: </label>
+            <div id="gain_1" style="position: fixed; top: 9px; left: 775px; padding: 1px; color: yellowgreen"></div>
+
+            <label style="position: fixed; top: 37px; left: 730px; padding: 1px; color: yellow">Gain: </label>
+            <div id="gain_2" style="position: fixed; top: 37px; left: 775px; padding: 1px; color: yellow"></div>
+
+            <label style="position: fixed; top: 9px; left: 850px; padding: 1px; color: yellowgreen">Drop: </label>
+            <div id="drop_1" style="position: fixed; top: 9px; left: 895px; padding: 1px; color: yellowgreen"></div>
+
+            <label style="position: fixed; top: 37px; left: 850px; padding: 1px; color: yellow">Drop: </label>
+            <div id="drop_2" style="position: fixed; top: 37px; left: 895px; padding: 1px; color: yellow"></div>
+
+            <label style="position: fixed; top: 9px; left: 980px; padding: 1px; color: yellowgreen">Distance: </label>
+            <div id="dist_1" style="position: fixed; top: 9px; left: 1055px; padding: 1px; color: yellowgreen"></div>
+
+            <label style="position: fixed; top: 37px; left: 980px; padding: 1px; color: yellow">Distance: </label>
+            <div id="dist_2" style="position: fixed; top: 37px; left: 1055px; padding: 1px; color: yellow"></div>
+
         </div>
         <div id="info" class="infonav">
             <div id='info' style="position: relative; top:10%; left: 20px; padding: 1px">Info </div>
             <div id='lat' style="position: relative; top:20%; left: 20px; padding: 1px">Latitutde: </div>
             <div id='long' style="position: relative; top:30%; left: 20px; padding: 1px">Longitude: </div>
             <div id="start" style="position: relative; top:40%; left: 20px; max-width: 250px; padding: 1px"> Start Location: </div>
-            <div id="end" style="position: relative; top: 50%; left: 20px; max-width: 250px; padding: 1px"> End Location: </div> 
+            <div id="end" style="position: relative; top: 50%; left: 20px; max-width: 250px; padding: 1px"> End Location: </div>
         </div>
-        
+
         <div id="loading">
             <img id="loading-image" src= "/map_loader.gif" alt="Loading..." style="top: 80; left: 300" />
         </div>
-        
+
         <script>
+            var address_text = false;
             var start_flag=false;
             var end_flag=false;
             var start_loc="";
             var end_loc="";
+            var start_address = "";
+            var end_address = "";
             var minimize_elevation=true;
             $(document).ready(function(){
                 $('.check').click(function() {
@@ -303,17 +343,32 @@
                 });
             });
 
+            document.getElementById('map_or_address').onclick=function(){
+                var x = document.getElementById("map_or_address");
+                    if (x.innerHTML === "Select Map") {
+                        x.innerHTML = "Type Address";
+                        document.getElementById("text_start_address").disabled = true;
+                        document.getElementById("text_end_address").disabled = true;
+                    } else {
+                        x.innerHTML = "Select Map";
+                        document.getElementById("text_start_address").disabled = false;
+                        document.getElementById("text_end_address").disabled = false;
+                    }
+            }
+
+
             mapboxgl.accessToken = '{{ ACCESS_KEY }}';
             var map = new mapboxgl.Map({
                 container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
+                // style: 'mapbox://styles/mapbox/streets-v11',
+                style: 'mapbox://styles/mapbox/dark-v10',
                 center: [-72.529262, 42.384803],
                 zoom: 13,
             });
 
             var m1, m2;
             points = turf.featureCollection([]);
-            
+
             map.on("load" , () => {
                 $('#loading').hide();
                 // add data source to hold our data we want to display
@@ -339,19 +394,22 @@
             }
             );
             map.on('mousemove', function (e) {
-                
-                document.getElementById('lat').innerHTML =                    
+
+                document.getElementById('lat').innerHTML =
                     "Latitude: "+e.lngLat["lat"].toFixed(4);
 
-                document.getElementById('long').innerHTML = 
+                document.getElementById('long').innerHTML =
                     "Longitude: "+e.lngLat["lng"].toFixed(4);
             });
-            
+
             map.on('click', function(e) {
+                var x = document.getElementById("map_or_address");
+                    if (x.innerHTML !== "Select Map") {
 
                 lngLat = new Array(e.lngLat.lng, e.lngLat.lat);
 
                 console.log(JSON.stringify(e.lngLat))
+
                 if (!start_flag)
                 {
                     document.getElementById('start').innerHTML ="Start Location:("+Math.round(e.lngLat["lat"] * 10000)/10000+","+Math.round(e.lngLat["lng"] * 10000)/10000+")";
@@ -372,8 +430,9 @@
                     end_flag=true;
                     document.getElementById("calc_route").disabled = false;
                 }
+                    }
             });
-            
+
             function reset()
             {
                 document.getElementById('start').innerHTML ="Start Location: ";
@@ -407,18 +466,18 @@
                 if (map.getSource("ele_route")){
                     map.removeSource("ele_route");
                 }
-  
+
                 document.getElementById('gain_1').innerHTML="";
                 document.getElementById('gain_2').innerHTML="";
                 document.getElementById('drop_1').innerHTML="";
                 document.getElementById('drop_2').innerHTML="";
                 document.getElementById('dist_1').innerHTML="";
                 document.getElementById('dist_2').innerHTML="";
-
+                140
             }
             function calc_route_reset()
             {
-                
+
                 if (map.getLayer("shortest_route")){
                     map.removeLayer("shortest_route");
                 }
@@ -434,7 +493,7 @@
                 if (map.getSource("ele_route")){
                     map.removeSource("ele_route");
                 }
- 
+
                 document.getElementById('gain_1').innerHTML="";
                 document.getElementById('gain_2').innerHTML="";
                 document.getElementById('drop_1').innerHTML="";
@@ -445,20 +504,20 @@
             }
             document.getElementById('reset').onclick=reset;
             function handleData(data)
-            {   
-                if (data["popup_flag"]==0)  
+            {
+                if (data["popup_flag"]==0)
                 {
                     var temp=confirm("Selected locations do not have neighboring nodes in underlying graph.Please select different points.");
                     return; print(elevation_profile_elenav)
-                }  
+                }
                 console.log(data["popup_flag"])
-                
-                if (data["popup_flag"]==1)  
+
+                if (data["popup_flag"]==1)
                 {
                     var temp=confirm("Could not find a path optimizing elevation for the given threshold (Plotting just the shortest path.).");
-                    
+
                 }
-                
+
                 map.addSource("ele_route", {
                     "type": "geojson",
                     "data": data["elevation_route"]
@@ -473,7 +532,7 @@
                         "line-cap": "round"
                     },
                     "paint": {
-                        "line-color": "#B01F00",
+                        "line-color": "Green",
                         "line-width": 2
                     }
                 });
@@ -492,7 +551,7 @@
                         "line-cap": "round"
                     },
                     "paint": {
-                        "line-color": "Blue",
+                        "line-color": "Yellow",
                         "line-width": 2
                     }
                 });
@@ -512,11 +571,10 @@
 
             }
 
-            document.getElementById('calc_route').onclick=function(){                
-                var checkedValue = $('.check:checked').val();  
-                console.log(document.getElementById('x').value) ;             
-                var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';                
-                
+            document.getElementById('calc_route').onclick=function(){
+                var checkedValue = $('.check:checked').val();
+                console.log(document.getElementById('x').value) ;
+                var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';
                 $('#loading').show();
                 calc_route_reset();
                 $.ajax({
@@ -525,13 +583,13 @@
                     data: input_data,
                     success: function(data){
                         $('#loading').hide();
-                        console.log("POST SUCCESS");                         
-                        handleData(data);                        
+                        console.log("POST SUCCESS");
+                        handleData(data);
                     },
                     dataType: "json"
                 });
             };
         </script>
-        
+
     </body>
 </html>
