@@ -433,6 +433,22 @@
                     }
             });
 
+            document.getElementById("text_start_address").addEventListener('input',setCalculateVisibilityOnAddresses);
+            document.getElementById("text_end_address").addEventListener('input',setCalculateVisibilityOnAddresses);
+
+            function setCalculateVisibilityOnAddresses(e){
+              console.log("Invoking this function on input event");
+              var start_address = document.getElementById("text_start_address").value.toString();
+              var end_address = document.getElementById("text_end_address").value.toString();
+
+              if(start_address && end_address){
+                document.getElementById("calc_route").disabled = false;
+              }
+              else{
+                document.getElementById("calc_route").disabled = true;
+              }
+            }
+
             function reset()
             {
                 document.getElementById('start').innerHTML ="Start Location: ";
@@ -572,22 +588,51 @@
             }
 
             document.getElementById('calc_route').onclick=function(){
-                var checkedValue = $('.check:checked').val();
-                console.log(document.getElementById('x').value) ;
-                var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';
-                $('#loading').show();
-                calc_route_reset();
-                $.ajax({
+                var map_or_address = document.getElementById("map_or_address");
+
+                if(map_or_address.innerHTML === "Type Address"){
+                  var checkedValue = $('.check:checked').val();
+                  console.log(document.getElementById('x').value) ;
+                  var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';
+                  $('#loading').show();
+                  calc_route_reset();
+                  $.ajax({
+                      type: "POST",
+                      url: '/route',
+                      data: input_data,
+                      success: function(data){
+                          $('#loading').hide();
+                          console.log("POST SUCCESS");
+                          handleData(data);
+                      },
+                      dataType: "json"
+                  });
+                }
+                else if(map_or_address.innerHTML === "Select Map"){
+                  var checkedValue = $('.check:checked').val();
+                  var input_data = {
+                    "start_address": document.getElementById("text_start_address").value,
+                    "x": document.getElementById('x').value,
+                    "end_address": document.getElementById("text_end_address").value,
+                    "min_max": checkedValue.toString()
+                  }
+                  input_data = JSON.stringify(input_data);
+                  // var input_data = '{"start_address":'+document.getElementById("text_start_address").value+',"x":'+document.getElementById('x').value+',"end_address":'+document.getElementById("text_end_address").value+',"min_max":"'+checkedValue.toString()+'"}';
+                  console.log("Address type input: " + input_data);
+                  $('#loading').show();
+                  $.ajax({
                     type: "POST",
-                    url: '/route',
+                    url: '/route_address',
                     data: input_data,
                     success: function(data){
-                        $('#loading').hide();
-                        console.log("POST SUCCESS");
-                        handleData(data);
+                      $('#loading').hide();
+                      console.log("POST SUCCESS");
+                      handleData(data);
                     },
                     dataType: "json"
-                });
+                  });
+                }
+
             };
         </script>
 
