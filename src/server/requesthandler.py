@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, session, g, request, url_for, flash, redirect, abort, render_template
 from geopy.geocoders import Nominatim
 import json
+import numpy as np
 from src.server.shortestPath import ShortestPath
 from src.server.constants import *
 from src.server.graphLoader import Graph_Loader
@@ -24,7 +25,7 @@ def get_coordinates(location_name):
     """
     locator = Nominatim(user_agent="myGeocoder")
     location = locator.geocode(location_name)
-    return location
+    return ((location.latitude),(location.longitude))
 
 
 def get_address(coordinates):
@@ -130,7 +131,5 @@ def get_routes_via_address():
     print(data['end_address'])
     print(data)
     # data will be following format: {'start_address': 'Hello', 'x': '0', 'end_address': 'World', 'min_max': 'minimize'}
-    # TODO: Need to update this for calculating routes via addresses
-    route_data = {}
-
+    route_data = get_data(get_coordinates(data['start_address']), get_coordinates(data['end_address']), np.float(data['x']),data['min_max'])
     return json.dumps(route_data)
