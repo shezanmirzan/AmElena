@@ -24,7 +24,7 @@
             #map { position:relative; width:100%; height: 100%;}
             .info {
                 display: block;
-                position: relative;
+                position: fixed;
                 margin: 0px auto;
                 border: none;
                 border-radius: 3px;
@@ -65,21 +65,19 @@
                 background-color:#747272;
                 overflow-x: hidden;
                 padding-top: 5px;
-
             }
 
             .infonav {
-                height: 50%;
+                height: 40%;
                 width: 22%;
                 position: fixed;
                 z-index: 1;
                 left: 0;
-                top: 50%;
+                top: 60%;
                 /* right: 10; */
                 background-color:#747272;
                 overflow-x: visible;
                 padding-top: 5px;
-
             }
 
             .msg {
@@ -98,8 +96,6 @@
                 color: whitesmoke;
                 padding: 15px 32px;
                 text-align: center;
-
-
             }
             .button:active:enabled {
                 background-color: #3a3a42;
@@ -129,7 +125,7 @@
             .logo{
                 position: fixed;
                 height:50px;
-                width: 130px;
+                width: 100px;
                 top:5px;
                 left:20px;
                 padding: 1px;
@@ -162,12 +158,12 @@
 
 
             .map_or_address-button {
-                position: relative;
-                top: 30%;
-                left: 1%;
+                position: fixed;
+                top:15px;
+                left:140px;
                 display: inline-block;
                 padding: 2px;
-                min-width: 100px;
+                min-width: 200px;
                 height: 24px;
                 text-align: center;
                 text-overflow: ellipsis;
@@ -264,7 +260,7 @@
 
 
         <div class="sidenav">
-            <img id="logo" src= "Elena-one.png" alt="Logo" class="logo" />
+            <img src="{{ url_for('static', filename='Elena_logo1.png') }}" alt="EleNa" class = "logo" />
             <br>
             <button id="map_or_address" class="map_or_address-button">Select Map</button>
             <!-- <input type="checkbox" id="map_or_address" name="map_or_address" value="address" style="position: relative; top: 40%; left: 0.5%; padding: 1px">
@@ -278,9 +274,9 @@
 
         <div class="sidenav0">
             <label for="start_address" class="start_add">&nbsp; Start Address &nbsp;&nbsp;</label>
-            <input type="text" id="text_start_address" name="start_address" placeholder="eg. UMass, Amherst, Massachusetts, USA" style="width: 250px; height: 30px; position: fixed; left: 17px; top:120; padding: 1px; border: none;">
+            <input type="text" id="text_start_address" name="start_address" placeholder="eg. UMass, Amherst, Massachusetts, USA" style="width: 300px; height: 30px; position: fixed; left: 17px; top:120; padding: 1px; border: none;">
             <label for="end_address" class="end_add">&nbsp; End Address &nbsp;&nbsp;</label>
-            <input type="text" id="text_end_address" name="start_address" placeholder="eg. UMass, Amherst, Massachusetts, USA" style="width: 250px; height: 30px; position: fixed; left: 17px; top:190; padding: 1px; border: none;">
+            <input type="text" id="text_end_address" name="start_address" placeholder="eg. UMass, Amherst, Massachusetts, USA" style="width: 300px; height: 30px; position: fixed; left: 17px; top:190; padding: 1px; border: none;">
             <label for="threshold" class="thres">Elevation max path limit (x%) &nbsp;&nbsp;</label>
             <input type="number" id="x" min="0" name="threshold" value=0 style="width: 115px; height: 30px; position: fixed; left: 150px; top:255; padding: 1px; text-align: center; border: none;">
             <input type="radio" name="skill1" class="check" style="position: fixed; top:300px; left: 20px; padding: 1px" value="minimize" checked>
@@ -317,14 +313,14 @@
 
         </div>
         <div id="info" class="infonav">
-            <div id='lat' style="position: relative; top:10%; left: 20px; padding: 1px">Latitutde: </div>
-            <div id='long' style="position: relative; top:15%; left: 20px; padding: 1px">Longitude: </div>
-            <div id="start" style="position: relative; top:25%; left: 20px; max-width: 250px; padding: 1px"> Start Location: </div>
-            <div id="end" style="position: relative; top: 40%; left: 20px; max-width: 250px; padding: 1px"> End Location: </div>
+            <div id='lat' style="position: relative; top:5%; left: 20px; padding: 1px">Latitutde: </div>
+            <div id='long' style="position: relative; top:10%; left: 20px; padding: 1px">Longitude: </div>
+            <div id="start" style="position: relative; top:15%; left: 20px; max-width: 250px; padding: 1px"> Start Location: </div>
+            <div id="end" style="position: relative; top: 20%; left: 20px; max-width: 250px; padding: 1px"> End Location: </div>
         </div>
 
         <div id="loading">
-            <img id="loading-image" src= "/map_loader.gif" alt="Loading..." style="top: 80; left: 300" />
+            <img src="{{ url_for('static', filename='map_loader_updated.gif') }}" alt="Loading...." class = "logo" style="top: 300; left: 800; height: 400; width: 800" />
         </div>
 
         <script>
@@ -576,11 +572,11 @@
                     }
                 });
                 console.log("Routes Drawn");
-                document.getElementById('info').style.height = "260px";
+                document.getElementById('info').style.height = "300px";
                 document.getElementById('start').innerHTML = "Start Location: " + data["start"];
                 document.getElementById('end').innerHTML = "End Location: " + data["end"];
-                document.getElementById('end').style.top = "245px";
-                document.getElementById('start').style.top = "150px";
+                document.getElementById('end').style.top = "100px";
+                document.getElementById('start').style.top = "60px";
                 document.getElementById('calc_route').innerHTML ="Re-Calculate";
                 document.getElementById('gain_1').innerHTML= data["gainElenav"].toFixed(2) + 'm';
                 document.getElementById('drop_1').innerHTML= data["dropElenav"].toFixed(2) + 'm';

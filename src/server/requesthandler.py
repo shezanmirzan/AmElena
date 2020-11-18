@@ -73,17 +73,15 @@ def update_data(sPath = None, ePath = None, start= None, end= None, null_data = 
     data["elenavDist"], data["gainElenav"], data["dropElenav"] = ePath[1], ePath[2], ePath[3]
     return data
 
-
-
 def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     """
     Get data for plotting the route using start and end coordinates of the place.
     :param coord_start: (tuple) (Latitude, Longitude) of the starting point
     :param coord_end: (tuple) (Latitude, Longitude) of the end point
-    :param thres: (float)
-    :param elevFlag: (str)
-    :param log: (boolean)
-    :return:
+    :param thres: (float) Elevation maximum path limit (x%)
+    :param elevFlag: (str) Minimum Elevation or Maximum elevation toggle
+    :param log: (boolean) Where to log the changes or not
+    :return: data (dict) data to e sent to UI
     """
 
     global init, G, M, shortestPathObj
@@ -131,9 +129,6 @@ def get_route():
 @app.route('/route_address', methods=['POST'])
 def get_routes_via_address():
     data = request.get_json(force=True)
-    print(data['start_address'])
-    print(data['end_address'])
-    print(data)
     # data will be following format: {'start_address': 'Hello', 'x': '0', 'end_address': 'World', 'min_max': 'minimize'}
     route_data = get_data(get_coordinates(data['start_address']), get_coordinates(data['end_address']), np.float(data['x']),data['min_max'])
     return json.dumps(route_data)
