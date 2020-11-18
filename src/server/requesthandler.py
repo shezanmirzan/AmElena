@@ -23,7 +23,9 @@ def get_coordinates(location_name):
     """
     locator = Nominatim(user_agent="myGeocoder")
     location = locator.geocode(location_name)
-    return ((location.latitude),(location.longitude))
+    if location == None:
+        return((None,None))
+    return ((location.latitude,location.longitude))
 
 def get_address(coordinates):
     """
@@ -86,6 +88,17 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
 
     global init, G, M, shortestPathObj
 
+    if not all(coord_end):
+        print("Wrong end address format or it is outside the selected map area.")
+        data = update_data(null_data = True)
+        data["popup_flag"] = -1
+        return data
+    elif not all(coord_start):
+        print("Wrong start address format or it is outside the selected map area.")
+        data = update_data(null_data = True)
+        data["popup_flag"] = -1
+        return data
+
     if log:
         print("Start Address: ", get_address(coord_start))
         print("End Address: ", get_address(coord_end))
@@ -101,7 +114,7 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     shortestPath, elevPath = shortestPathObj.get_shortest_path(coord_start, coord_end, thres, elev_type=elevFlag, log=log)
 
     if shortestPath is None and elevPath is None:
-        data = update_data(True)
+        data = update_data(null_data = True)
         return data
 
     data = update_data(shortestPath, elevPath, coord_start, coord_end, False)
