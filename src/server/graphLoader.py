@@ -32,18 +32,18 @@ class Graph_Loader:
         # Updates the graph with distance from end point and returns it.
         
         if not self.cached:
-            download_Map() #If the map is not cached, download the map!
+            self.download_Map(endpt) #If the map is not cached, download the map!
 
         self.G = self.update_endPoint_distance(self.G,endpt)
         return self.G
     
-    def download_Map(self, endpt):
+    def download_Map(self,endpt):
         
         #Download Map from OSMNX around the fixed center if cache map is not available
 
         map_center = [42.384803, -72.529262]
         self.logger.warning("Downloading the Map")
-        self.G = ox.graph_from_point(map_center, distance=20000, network_type='walk')
+        self.G = ox.graph_from_point(map_center, dist=20000, network_type='walk')
         self.G = ox.add_node_elevations(self.G, api_key=self.GOOGLEAPIKEY)
         p.dump( self.G, open( constants.CACHED_MAP_FILENAME, "wb" ) )
         self.cached = True

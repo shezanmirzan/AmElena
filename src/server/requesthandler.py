@@ -23,7 +23,9 @@ def get_coordinates(location_name):
     """
     locator = Nominatim(user_agent="myGeocoder")
     location = locator.geocode(location_name)
-    return ((location.latitude),(location.longitude))
+    if location == None:
+        return((None,None))
+    return ((location.latitude,location.longitude))
 
 def get_address(coordinates):
     """
@@ -73,20 +75,29 @@ def update_data(sPath = None, ePath = None, start= None, end= None, null_data = 
     data["elenavDist"], data["gainElenav"], data["dropElenav"] = ePath[1], ePath[2], ePath[3]
     return data
 
-
-
 def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     """
     Get data for plotting the route using start and end coordinates of the place.
     :param coord_start: (tuple) (Latitude, Longitude) of the starting point
     :param coord_end: (tuple) (Latitude, Longitude) of the end point
-    :param thres: (float)
-    :param elevFlag: (str)
-    :param log: (boolean)
-    :return:
+    :param thres: (float) Elevation maximum path limit (x%)
+    :param elevFlag: (str) Minimum Elevation or Maximum elevation toggle
+    :param log: (boolean) Where to log the changes or not
+    :return: data (dict) data to e sent to UI
     """
 
     global init, G, M, shortestPathObj
+
+    if not all(coord_end):
+        print("Wrong end address format or it is outside the selected map area.")
+        data = update_data(null_data = True)
+        data["popup_flag"] = -1
+        return data
+    elif not all(coord_start):
+        print("Wrong start address format or it is outside the selected map area.")
+        data = update_data(null_data = True)
+        data["popup_flag"] = -1
+        return data
 
     if log:
         print("Start Address: ", get_address(coord_start))
@@ -103,7 +114,7 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     shortestPath, elevPath = shortestPathObj.get_shortest_path(coord_start, coord_end, thres, elev_type=elevFlag, log=log)
 
     if shortestPath is None and elevPath is None:
-        data = update_data(True)
+        data = update_data(null_data = True)
         return data
 
     data = update_data(shortestPath, elevPath, coord_start, coord_end, False)
@@ -131,9 +142,6 @@ def get_route():
 @app.route('/route_address', methods=['POST'])
 def get_routes_via_address():
     data = request.get_json(force=True)
-    print(data['start_address'])
-    print(data['end_address'])
-    print(data)
     # data will be following format: {'start_address': 'Hello', 'x': '0', 'end_address': 'World', 'min_max': 'minimize'}
     route_data = get_data(get_coordinates(data['start_address']), get_coordinates(data['end_address']), np.float(data['x']),data['min_max'])
     return json.dumps(route_data)
