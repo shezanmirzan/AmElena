@@ -42,28 +42,28 @@ def test_get_route(A):
 def test_get_path_weight(A):
     print("Testing get_path_weight method in algorithms.py")
 
-    route = [0, 3, 4, 2]
+    route = [0,3,4,2]
     c, p = A.get_path_weight(route, weight_attribute = "both", isPiecewise = True)
     assert isinstance(c, float)
     assert isinstance(p, list)
-    assert c == 0.0
-    assert p == [1.0, 0.0, -1.0]
+    assert c == 1.0
+    assert p == [3.0, 1.0, -3.0]
 
     c = A.get_path_weight(route, weight_attribute = "both")
     assert isinstance(c, float)
-    assert c == 0.0
+    assert c == 1.0
 
     c, p = A.get_path_weight(route, weight_attribute = "elevation_gain", isPiecewise = True)
     assert isinstance(c, float)
     assert isinstance(p, list)
-    assert c == 1.0
-    assert p == [1.0, 0.0, 0.0]
+    assert c == 4.0
+    assert p == [3.0, 1.0, 0.0]
 
     c, p = A.get_path_weight(route, weight_attribute = "elevation_drop", isPiecewise = True)
     assert isinstance(c, float)
     assert isinstance(p, list)
-    assert c == 1.0
-    assert p == [0.0, 0.0, 1.0]
+    assert c == 3.0
+    assert p == [0.0, 0.0, 3.0]
 
     c, p = A.get_path_weight(route, weight_attribute = "normal", isPiecewise = True)
     assert isinstance(c, float)
@@ -75,19 +75,19 @@ def test_get_path_weight(A):
 def test_get_edge_weight(A, node1=0, node2=1):
     print("Testing get_edge_weight method in algorithms.py")
 
-    c = A.get_edge_weight(0, 1, weight_attribute="normal")
+    c = A.get_edge_weight(1, 0, weight_attribute="normal")
     assert isinstance(c, float)
     assert c == 3.0
 
     c = A.get_edge_weight(0, 3, weight_attribute="elevation_difference")
     assert isinstance(c, float)
-    assert c == 1.0
+    assert c == 3.0
 
-    c = A.get_edge_weight(5, 4, weight_attribute="elevation_difference")
+    c = A.get_edge_weight(4, 2, weight_attribute="elevation_difference")
     assert isinstance(c, float)
-    assert c == -2.0
+    assert c == -3.0
 
-    c = A.get_edge_weight(1, 4, weight_attribute="elevation_gain")
+    c = A.get_edge_weight(3, 4, weight_attribute="elevation_gain")
     assert isinstance(c, float)
     assert c == 1.0
 
@@ -95,19 +95,15 @@ def test_get_edge_weight(A, node1=0, node2=1):
     assert isinstance(c, float)
     assert c == 0.0
 
-    c = A.get_edge_weight(6, 2, weight_attribute="elevation_drop")
+    c = A.get_edge_weight(4, 2, weight_attribute="elevation_drop")
+    assert isinstance(c, float)
+    assert c == 3.0
+
+    c = A.get_edge_weight(1, 4, weight_attribute="abs")
     assert isinstance(c, float)
     assert c == 4.0
 
-    c = A.get_edge_weight(2, 6, weight_attribute="elevation_drop")
-    assert isinstance(c, float)
-    assert c == 0.0
-
-    c = A.get_edge_weight(2, 6, weight_attribute="abs")
-    assert isinstance(c, float)
-    assert c == 4.0
-
-    c = A.get_edge_weight(6, 2, weight_attribute="abs")
+    c = A.get_edge_weight(4, 1, weight_attribute="abs")
     assert isinstance(c, float)
     assert c == 4.0
 
@@ -147,16 +143,15 @@ def test_get_data(start, end, thres = 100, elevFlag = "maximize"):
     locator = Nominatim(user_agent="myGeocoder")
     location = locator.reverse(start)
     locate = location.address.split(',')
-
     len_location = len(locate)
 
-    start_loc = locate[0] + ',' + locate[1] + ',' + locate[2] + ',' + locate[len_location-5] + ',' + locate[len_location-3] + ', USA - ' + locate[len_location-2]
+    start_loc = locate[0] + ',' + locate[1] +  ',' + locate[len_location-5] + ',' + locate[len_location-3] + ', USA - ' + locate[len_location-2]
 
     location = locator.reverse(end)
     locate = location.address.split(',')
     len_location = len(locate)
 
-    end_loc = locate[0] + ',' + locate[1] + ',' + locate[2] + ',' + locate[len_location-5] + ',' + locate[len_location-3] + ', USA - ' + locate[len_location-2]
+    end_loc = locate[0] + ',' + locate[1] + ',' + locate[len_location-5] + ',' + locate[len_location-3] + ', USA - ' + locate[len_location-2]
 
     assert isinstance(d, dict)
     assert start_loc == d["start"]
@@ -190,11 +185,11 @@ def test_get_coordinates():
 @Test("")
 def test_get_address(coordinates):
     print("Testing get_address method in requesthandler.py")
-    assert get_address(coordinates) == "East Hadley Road, Mill Valley, Amherst, Massachusetts, USA -  01004"
+    assert get_address(coordinates) == "University of Massachusetts Amherst, North Pleasant Street, Amherst, Massachusetts, USA -  01003"
 
 
 if __name__ == "__main__":
-    start, end = (42.350541, -72.528715), (42.350541, -72.528715)
+    start, end = (42.390873, -72.525717), (42.389747, -72.528293)
 
     G = nx.Graph()
     # Create toy graph with nodes 0-5
@@ -210,14 +205,14 @@ if __name__ == "__main__":
     S = ShortestPath(G, 100.0)
 
     # Tests #####
-    # test_get_graph(end)
+    test_get_graph(end)
     test_check_nodes(A)
     test_get_route(A)
     test_get_edge_weight(A)
     test_get_path_weight(A)
-    # test_get_shortest_path(start, end)
+    test_get_shortest_path(start, end)
     test_get_json(start)
-    # test_get_data(start, end)
+    test_get_data(start, end)
     test_resetBestPath(G)
     test_get_coordinates()
     test_get_address(start)
