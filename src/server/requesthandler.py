@@ -143,5 +143,9 @@ def get_route():
 def get_routes_via_address():
     data = request.get_json(force=True)
     # data will be following format: {'start_address': 'Hello', 'x': '0', 'end_address': 'World', 'min_max': 'minimize'}
-    route_data = get_data(get_coordinates(data['start_address']), get_coordinates(data['end_address']), np.float(data['x']),data['min_max'])
+    start_coordinates = get_coordinates(data['start_address'])
+    end_coordinates = get_coordinates(data['end_address'])
+    route_data = get_data(start_coordinates, end_coordinates, np.float(data['x']),data['min_max'])
+    route_data['start_coordinates'] = start_coordinates[::-1]
+    route_data['end_coordinates'] = end_coordinates[::-1]
     return json.dumps(route_data)

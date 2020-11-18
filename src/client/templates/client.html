@@ -518,8 +518,14 @@
 
             }
             document.getElementById('reset').onclick=reset;
-            function handleData(data)
+            function handleData(data, request_endpoint)
             {
+                console.log("Data: " + JSON.stringify(data));
+                if(data["popup_flag"] === -1){
+                  calc_route_reset();
+                  return;
+                }
+
                 if (data["popup_flag"]==0)
                 {
                     var temp=confirm("Selected locations do not have neighboring nodes in underlying graph.Please select different points.");
@@ -531,6 +537,14 @@
                 {
                     var temp=confirm("Could not find a path optimizing elevation for the given threshold (Plotting just the shortest path.).");
 
+                }
+
+                if(request_endpoint === "route_address"){
+                  var start_coordinates = data["start_coordinates"];
+                  m1 = new mapboxgl.Marker({color:'red'}).setLngLat(start_coordinates).addTo(map);
+
+                  var end_coordinates = data["end_coordinates"];
+                  m2 = new mapboxgl.Marker({color:'blue'}).setLngLat(end_coordinates).addTo(map);
                 }
 
                 map.addSource("ele_route", {
@@ -602,7 +616,7 @@
                       success: function(data){
                           $('#loading').hide();
                           console.log("POST SUCCESS");
-                          handleData(data);
+                          handleData(data, "route");
                       },
                       dataType: "json"
                   });
@@ -627,7 +641,7 @@
                     success: function(data){
                       $('#loading').hide();
                       console.log("POST SUCCESS");
-                      handleData(data);
+                      handleData(data, "route_address");
                     },
                     dataType: "json"
                   });
