@@ -462,8 +462,8 @@
                 start_loc="";
                 start_flag=false;
                 end_loc="";
-                m1.remove();
-                m2.remove();
+                if(m1) m1.remove();
+                if(m2) m2.remove();
                 end_flag=false;
                 points = turf.featureCollection([]);
                 map.getSource('circleData').setData(points);
@@ -489,7 +489,6 @@
                 document.getElementById('drop_2').innerHTML="";
                 document.getElementById('dist_1').innerHTML="";
                 document.getElementById('dist_2').innerHTML="";
-                140
             }
             function calc_route_reset()
             {
