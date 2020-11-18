@@ -32,7 +32,7 @@ class Graph_Loader:
         # Updates the graph with distance from end point and returns it.
         
         if not self.cached:
-            download_Map() #If the map is not cached, download the map!
+            self.download_Map() #If the map is not cached, download the map!
 
         self.G = self.update_endPoint_distance(self.G,endpt)
         return self.G
