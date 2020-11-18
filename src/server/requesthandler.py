@@ -3,7 +3,7 @@ from geopy.geocoders import Nominatim
 import json
 from src.server.shortestPath import ShortestPath
 from src.server.constants import *
-from src.server.abstraction import Graph_Loader
+from src.server.graphLoader import Graph_Loader
 
 app = Flask(__name__, static_url_path='', static_folder="../client/static", template_folder="../client/templates")
 app.config.from_object(__name__)
