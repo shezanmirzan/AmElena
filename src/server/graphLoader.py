@@ -1,10 +1,12 @@
 import osmnx as ox
 import os
-import numpy as np
-import pickle as p
+import pickle as pkl
+import logging
+
 from src.server.constants import API
 from  src.server import constants
-import logging
+from src.server import config
+from src.server.distance import DistanceCalculator
 
 class Graph_Loader:
     
@@ -16,11 +18,12 @@ class Graph_Loader:
         self.logger.debug("Initializing Map Loader")
         self.GOOGLEAPIKEY=API[constants.GOOGLEAPIKEY]
 
+        self.distance_calculator = DistanceCalculator(config.DIST_TYPE)
 
         self.logger.info("Loading Map from cache : " + constants.CACHED_MAP_FILENAME)
 
         if os.path.exists("./"+ constants.CACHED_MAP_FILENAME):
-            self.G = p.load( open(constants.CACHED_MAP_FILENAME, "rb" ) )
+            self.G = pkl.load( open(constants.CACHED_MAP_FILENAME, "rb" ) )
             self.cached = True
             self.logger.info("Map Loaded succesfully from cache")
         else:
@@ -36,30 +39,6 @@ class Graph_Loader:
 
         self.G = self.update_endPoint_distance(self.G,endpt)
         return self.G
-    
-    def download_Map(self,endpt):
-        
-        #Download Map from OSMNX around the fixed center if cache map is not available
-
-        map_center = [42.384803, -72.529262]
-        self.logger.warning("Downloading the Map")
-        self.G = ox.graph_from_point(map_center, dist=20000, network_type='walk')
-        self.G = ox.add_node_elevations(self.G, api_key=self.GOOGLEAPIKEY)
-        p.dump( self.G, open( constants.CACHED_MAP_FILENAME, "wb" ) )
-        self.cached = True
-        self.logger.info("The Graph has been saved")
-
-    def get_node_distance(self,latitude_source,longitude_source,latitude_destination,longitude_destination):
-		
-        # Computes distance between two nodes
-        
-        latitude_source, longitude_source = np.radians(latitude_source), np.radians(longitude_source)
-        latitude_destination, longitude_destination = np.radians(latitude_destination),np.radians(longitude_destination)
-
-        a = np.sin((latitude_destination - latitude_source) / 2)**2 + np.cos(latitude_source) * np.cos(latitude_destination) * np.sin((longitude_destination - longitude_source) / 2)**2
-
-        radius=6371008.8 # Earth radius
-        return radius * 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
 
     def update_endPoint_distance(self,G,endpt):
 
@@ -67,8 +46,19 @@ class Graph_Loader:
         
         end_node=G.nodes[ox.get_nearest_node(G, point=endpt)]
         for node,data in G.nodes(data=True):
-            data[constants.DESTINATION_DISTANCE] = self.get_node_distance(end_node[constants.Y_COORDINATE],end_node[constants.X_COORDINATE],G.nodes[node][constants.Y_COORDINATE],G.nodes[node][constants.X_COORDINATE])
+            data[constants.DESTINATION_DISTANCE] = self.distance_calculator.get_node_distance(end_node[constants.Y_COORDINATE],end_node[constants.X_COORDINATE],G.nodes[node][constants.Y_COORDINATE],G.nodes[node][constants.X_COORDINATE])
         return G
+
+    def download_Map(self,endpt):
+        
+        #Download Map from OSMNX around the fixed center if cache map is not available
+
+        self.logger.warning("Downloading the Map")
+        self.G = ox.graph_from_point(config.MAP_CENTER, dist=20000, network_type='walk')
+        self.G = ox.add_node_elevations(self.G, api_key=self.GOOGLEAPIKEY)
+        pkl.dump( self.G, open( constants.CACHED_MAP_FILENAME, "wb" ) )
+        self.cached = True
+        self.logger.info("The Graph has been saved")
 
 
 

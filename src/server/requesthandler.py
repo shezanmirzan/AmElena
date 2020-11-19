@@ -1,4 +1,5 @@
 from src.server.constants import *
+from src.server import config
 from src.server.shortestPath import ShortestPath
 from src.server.graphLoader import Graph_Loader
 
@@ -7,7 +8,7 @@ import numpy as np
 from flask import Flask, request, render_template
 from geopy.geocoders import Nominatim
 
-ACCESS_KEY = API_KEY
+ACCESS_KEY = config.API_KEY
 init = False
 G, M, algorithms = None, None, None
 

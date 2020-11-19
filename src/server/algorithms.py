@@ -119,7 +119,7 @@ class Algorithms:
                             nxt = edge_len*0.1 + self.get_edge_weight(this_node, n, constants.ELEVATION_DROP)
                             nxt += curr_priority
                         else:
-                            nxt = (edge_len*0.1 - self.get_edge_weight(this_node, n, constants.ELEVATION_DIFFERENCE))* edge_len*0.1
+                            nxt = (edge_len*0.1    - self.get_edge_weight(this_node, n, constants.ELEVATION_DIFFERENCE))* edge_len*0.1
                     else:
                         nxt = edge_len*0.1 + self.get_edge_weight(this_node, n, constants.ELEVATION_GAIN)
                         nxt += curr_priority
