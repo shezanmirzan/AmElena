@@ -2,9 +2,9 @@ import osmnx as ox
 import networkx as nx
 from  src.server import constants
 from collections import deque, defaultdict
-from src.server.algorithms import Algorithms
 from heapq import *
 import logging
+from src.server.algorithms import Djikstra, AStar
 
 
 class ShortestPath:
@@ -42,10 +42,9 @@ class ShortestPath:
 
         shortest_route_latlong = [[G.nodes[route_node]['x'],G.nodes[route_node]['y']] for route_node in self.shortest_route]
 
-        algorithms = Algorithms(G, self.shortest_dist, thresh = self.x, elev_type = elev_type, start_node = self.start_node, end_node = self.end_node)
+        djikstra = Djikstra(G, self.shortest_dist, thresh = self.x, elev_type = elev_type, start_node = self.start_node, end_node = self.end_node)
 
-        shortestPathStats = [shortest_route_latlong, self.shortest_dist, \
-                            algorithms.get_path_weight(self.shortest_route, constants.ELEVATION_GAIN), algorithms.get_path_weight(self.shortest_route, constants.ELEVATION_DROP)]
+        shortestPathStats = [shortest_route_latlong, self.shortest_dist, djikstra.get_path_weight(self.shortest_route, constants.ELEVATION_GAIN), djikstra.get_path_weight(self.shortest_route, constants.ELEVATION_DROP)]
 
 
 
@@ -54,16 +53,17 @@ class ShortestPath:
 
         #Get route using Djikstra's algorithm
         self.resetBestPath()
-        dijkstra_route = algorithms.dijkstra()
-        self.print_route_statistics(dijkstra_route)
+        djikstra_route = djikstra.shortest_path()
+        self.print_route_statistics(djikstra_route)
 
 
         #Get route using A* algorithm
+        a_star = AStar(G, self.shortest_dist, thresh = self.x, elev_type = elev_type, start_node = self.start_node, end_node = self.end_node)
         self.resetBestPath()
-        a_star_route = algorithms.a_star()
+        a_star_route = a_star.shortest_path()
         self.print_route_statistics(a_star_route)
 
-        self.selectBestPath(dijkstra_route, a_star_route)
+        self.selectBestPath(djikstra_route, a_star_route)
 
         # If dijkstra or A-star doesn't return a shortest path based on elevation requirements
         if (self.elev_type == constants.MAXIMIZE and self.optimal_path[2] == float('-inf')) or (self.elev_type == constants.MINIMIZE and self.optimal_path[3] == float('-inf')):
@@ -77,12 +77,12 @@ class ShortestPath:
 
         return shortestPathStats, self.optimal_path
 
-    def selectBestPath(self,dijkstra_route, a_star_route, log=True):
+    def selectBestPath(self,djikstra_route, a_star_route, log=True):
 
         if self.elev_type == constants.MAXIMIZE:
-            self.optimal_path = dijkstra_route if (dijkstra_route[2] > a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]) else a_star_route
+            self.optimal_path = djikstra_route if (djikstra_route[2] > a_star_route[2]) or (djikstra_route[2] == a_star_route[2] and djikstra_route[1] < a_star_route[1]) else a_star_route
         else:
-            self.optimal_path = dijkstra_route if (dijkstra_route[2] < a_star_route[2]) or (dijkstra_route[2] == a_star_route[2] and dijkstra_route[1] < a_star_route[1]) else a_star_route
+            self.optimal_path = djikstra_route if (djikstra_route[2] < a_star_route[2]) or (djikstra_route[2] == a_star_route[2] and djikstra_route[1] < a_star_route[1]) else a_star_route
 
         self.logger.info("Best selected route is " + self.optimal_path[4])
 
