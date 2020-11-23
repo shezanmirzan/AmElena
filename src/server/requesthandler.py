@@ -109,10 +109,10 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     if not init:
         graph_loader = Graph_Loader()
         G = graph_loader.get_graph(coord_end)
-        shortestPathObj = ShortestPath(G, x=thres, elev_type=elevFlag)
+        shortestPathObj = ShortestPath(G, x=thres, elevation_mode=elevFlag)
         init = True
 
-    shortestPath, elevPath = shortestPathObj.get_shortest_path(coord_start, coord_end, thres, elev_type=elevFlag, log=log)
+    shortestPath, elevPath = shortestPathObj.get_shortest_path(coord_start, coord_end, thres, elevation_mode=elevFlag)
 
     if shortestPath is None and elevPath is None:
         data = update_data(null_data = True)

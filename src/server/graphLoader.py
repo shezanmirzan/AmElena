@@ -30,28 +30,28 @@ class Graph_Loader:
             self.logger.warning("Map cannot be loaded succesfully from cache")
             self.cached = False
 
-    def get_graph(self, endpt):
+    def get_graph(self, loc):
         
         # Updates the graph with distance from end point and returns it.
         
         if not self.cached:
-            self.download_Map(endpt) #If the map is not cached, download the map!
+            self.download_Map() #If the map is not cached, download the map!
 
-        self.G = self.update_endPoint_distance(self.G,endpt)
+        self.G = self.update_endPoint_distance(self.G,loc)
         return self.G
 
-    def update_endPoint_distance(self,G,endpt):
+    def update_endPoint_distance(self,G,loc):
 
         #Graph is updated with Distance from all nodes in the graph to the final destination
         
-        end_node=G.nodes[ox.get_nearest_node(G, point=endpt)]
+        end_node=G.nodes[ox.get_nearest_node(G, point=loc)]
         for node,data in G.nodes(data=True):
             data[constants.DESTINATION_DISTANCE] = self.distance_calculator.get_node_distance(end_node[constants.Y_COORDINATE],end_node[constants.X_COORDINATE],G.nodes[node][constants.Y_COORDINATE],G.nodes[node][constants.X_COORDINATE])
         return G
 
-    def download_Map(self,endpt):
+    def download_Map(self):
         
-        #Download Map from OSMNX around the fixed center if cache map is not available
+        #Download Map from OSMNX around the fixed center(can be changed in config.py) if cache map is not available
 
         self.logger.warning("Downloading the Map")
         self.G = ox.graph_from_point(config.MAP_CENTER, dist=20000, network_type='walk')
