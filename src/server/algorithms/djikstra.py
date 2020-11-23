@@ -5,11 +5,12 @@ from collections import deque, defaultdict
 from .algorithms_abstract import AlgorithmsAbstract
 from .constants import *
 from .edge_weight_calculator import *
+from .. import config
 
 
 class Djikstra(AlgorithmsAbstract):
-    def __init__(self, G, shortest_dist, thresh = 0.0, elev_type = MAXIMIZE, start_node = None, end_node = None):
-        super(Djikstra, self).__init__(G, shortest_dist, thresh, elev_type, start_node, end_node)
+    def __init__(self, G, shortest_dist, thresh = 0.0, elevation_mode = MAXIMIZE, start_node = None, end_node = None):
+        super(Djikstra, self).__init__(G, shortest_dist, thresh, elevation_mode, start_node, end_node)
 
     def get_route(self, parent_node, dest):
         #"returns the path given a parent mapping and the final dest"
@@ -20,68 +21,72 @@ class Djikstra(AlgorithmsAbstract):
             curr = parent_node[curr]
         return path[::-1]
 
-    def get_updated_priority(self, node_1, node_2, edge_len, curr_priority):
-        elev_type = self.elev_type
-        thresh = self.thresh
-
-        if elev_type == MAXIMIZE:
-            if thresh <= 0.5:
-                return edge_len*0.1 + EdgeWeightCalculator.get_weight(self.G, node_1, node_2, ELEVATION_DROP) + curr_priority
-            else:
-                return (edge_len*0.1 - EdgeWeightCalculator.get_weight(self.G, node_1, node_2, ELEVATION_DIFFERENCE))*edge_len*0.1
-        else:
-            return edge_len*0.1 + EdgeWeightCalculator.get_weight(self.G, node_1, node_2, ELEVATION_GAIN) + curr_priority
 
     def shortest_path(self):
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ INSIDE DJIKSTRA SHORTEST PATH 0")
+ 
         if not self.check_nodes() :
             return
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ INSIDE DJIKSTRA SHORTEST PATH 1")
-        G, thresh, shortest_path_weight, elev_type = self.G, self.thresh, self.shortest_path_total_weight, self.elev_type
+
+        G, thresh, shortest_path_weight, elevation_mode = self.G, self.thresh, self.shortest_path_total_weight, self.elevation_mode
         start_node, end_node = self.start_node, self.end_node
 
-        temp = [(0.0, 0.0, start_node)]
-        seen = set()
-        prior_info = {start_node: 0}
+        min_heap = [(0.0, 0.0, start_node)]
+
+        visited = set()
+        score_info = {start_node: 0}
+
+        #Set parent node dictionary
         parent_node = defaultdict(int)
         parent_node[start_node] = -1
 
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ INSIDE DJIKSTRA SHORTEST PATH 2")
+ 
+        while min_heap:
 
+            this_score, this_distance, this_node = heappop(min_heap)
 
-        while temp:
-            curr_priority, curr_distance, this_node = heappop(temp)
+            if this_node not in visited:
+                visited.add(this_node)
 
-            if this_node not in seen:
-                seen.add(this_node)
+                #Break if end node is reached
                 if this_node == end_node:
                     break
 
-                for n in G.neighbors(this_node):
-                    if n in seen:
+                for adj in G.neighbors(this_node):
+                    if adj in visited:
                         continue
 
-                    prev = prior_info.get(n, None) # get past priority of the node
-                    edge_len = EdgeWeightCalculator.get_weight(self.G, this_node, n, NORMAL)
+                    prev = score_info.get(adj, None) # get past priority of the node
+                    edge_weight = EdgeWeightCalculator.get_weight(self.G, this_node, adj, NORMAL)
 
                     # Update distance btw the nodes depending on maximize(subtract) or minimize elevation(add)
-                    new_priority = self.get_updated_priority(this_node, n, edge_len, curr_priority)
+                    updated_score = self.get_updated_score(this_node, adj, edge_weight, this_score)
 
-                    nxt_distance = curr_distance + edge_len
+                    updated_distance = this_distance + edge_weight
 
-                    if nxt_distance <= shortest_path_weight*(1.0+thresh) and (prev is None or new_priority < prev):
-                        parent_node[n] = this_node
-                        prior_info[n] = new_priority
-                        heappush(temp, (new_priority, nxt_distance, n))
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ INSIDE DJIKSTRA SHORTEST PATH 3")
+                    if updated_distance <= shortest_path_weight*(1.0+thresh) and (prev is None or updated_score < prev):
+                        parent_node[adj] = this_node
+                        score_info[adj] = updated_score
+                        heappush(min_heap, (updated_score, updated_distance, adj))
 
-        if not curr_distance:
+        if not this_distance:
             return
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ INSIDE DJIKSTRA SHORTEST PATH 4")
 
         route = self.get_route(parent_node, end_node)
         gain = self.get_path_weight(route, ELEVATION_GAIN)
         drop = self.get_path_weight(route, ELEVATION_DROP)
 
-        # TODO: Need to remove DJIKSTRA
-        return [route[:], curr_distance, gain, drop, DJIKSTRA]
+        return [route[:], this_distance, gain, drop, DJIKSTRA]
+
+    def get_updated_score(self, node_1, node_2, edge_weight, this_score):
+        
+        # Calculates updated priority of an edge using the edge length (Scaled by the scaling factor)
+        
+        elevation_mode = self.elevation_mode
+        thresh = self.thresh
+        scaled_edge_length  = edge_weight*config.DJIKSTRA_SCALING_FACTOR
+
+        if elevation_mode == MAXIMIZE:
+            return scaled_edge_length + EdgeWeightCalculator.get_weight(self.G, node_1, node_2, ELEVATION_DROP) + this_score
+        else:
+            return scaled_edge_length + EdgeWeightCalculator.get_weight(self.G, node_1, node_2, ELEVATION_GAIN) + this_score
+

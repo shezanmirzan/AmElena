@@ -5,11 +5,12 @@ from collections import deque, defaultdict
 from .algorithms_abstract import AlgorithmsAbstract
 from .constants import *
 from .edge_weight_calculator import *
+from .. import config
 
 
 class AStar(AlgorithmsAbstract):
-    def __init__(self, G, shortest_dist, thresh = 0.0, elev_type = MAXIMIZE, start_node = None, end_node = None):
-        super(AStar, self).__init__(G, shortest_dist, thresh, elev_type, start_node, end_node)
+    def __init__(self, G, shortest_dist, thresh = 0.0, elevation_mode = MAXIMIZE, start_node = None, end_node = None):
+        super(AStar, self).__init__(G, shortest_dist, thresh, elevation_mode, start_node, end_node)
 
     def retrace_path(self, parent_dict, this_node):
         # Reconstructs the path and plots it.
@@ -21,16 +22,16 @@ class AStar(AlgorithmsAbstract):
 
         return path
 
-    def g(self, this_node, n):
-        elev_type = self.elev_type
+    def g(self, this_node, adj_node):
+        elevation_mode = self.elevation_mode
 
-        if elev_type == MINIMIZE:
-            return EdgeWeightCalculator.get_weight(self.G, this_node, n, ELEVATION_GAIN)
-        elif elev_type == MAXIMIZE:
-            return EdgeWeightCalculator.get_weight(self.G, this_node, n, ELEVATION_DROP)
+        if elevation_mode == MINIMIZE:
+            return EdgeWeightCalculator.get_weight(self.G, this_node, adj_node, ELEVATION_GAIN)
+        elif elevation_mode == MAXIMIZE:
+            return EdgeWeightCalculator.get_weight(self.G, this_node, adj_node, ELEVATION_DROP)
 
     def h(self, n):
-        return self.G.nodes[n][DESTINATION_DISTANCE]*0.1
+        return self.G.nodes[n][DESTINATION_DISTANCE]*config.A_STAR_SCALING_FACTOR
 
     def shortest_path(self):
         # Implements A* algorithm for calculating distances with hueristics as distance from Destination node(calculated using latitudes and longitudes)
@@ -51,7 +52,7 @@ class AStar(AlgorithmsAbstract):
             return
 
         G, shortest_path_weight = self.G, self.shortest_path_total_weight
-        thresh, elev_type = self.thresh, self.elev_type
+        thresh, elevation_mode = self.thresh, self.elevation_mode
         start_node= self.start_node
         end_node = self.end_node
 
@@ -85,23 +86,23 @@ class AStar(AlgorithmsAbstract):
             visited.add(this_node)
 
             #For all nodes that are neighbouring to the current node, update it's g-score and f-score using the formula f = g + h
-            for n in G.neighbors(this_node):
+            for adj in G.neighbors(this_node):
                 #Continue if the neighbour node is already visited
-                if n in visited:
+                if adj in visited:
                     continue
 
-                pred_path_score = path_score[this_node] + self.g(this_node, n)
-                pred_path_score1 = path_score1[this_node] + EdgeWeightCalculator.get_weight(self.G, this_node, n, NORMAL)
+                pred_path_score = path_score[this_node] + self.g(this_node, adj)
+                pred_path_score1 = path_score1[this_node] + EdgeWeightCalculator.get_weight(self.G, this_node, adj, NORMAL)
 
-                if n not in unvisited and pred_path_score1<=(1+thresh)*shortest_path_weight: # Discover a new node
-                    unvisited.add(n)
+                if adj not in unvisited and pred_path_score1<=(1+thresh)*shortest_path_weight: # Discover a new node
+                    unvisited.add(adj)
                 else:
-                    if (pred_path_score >= path_score[n]) or (pred_path_score1>=(1+thresh)*shortest_path_weight):
+                    if (pred_path_score >= path_score[adj]) or (pred_path_score1>=(1+thresh)*shortest_path_weight):
                         continue
 
-                parent_dict[n] = this_node
-                path_score[n] = pred_path_score
-                path_score1[n] = pred_path_score1
-                total_score[n] = path_score[n] + self.h(n)
+                parent_dict[adj] = this_node
+                path_score[adj] = pred_path_score
+                path_score1[adj] = pred_path_score1
+                total_score[adj] = path_score[adj] + self.h(adj)
 
         return self.optimal_path

@@ -8,16 +8,16 @@ from .edge_weight_calculator import *
 
 
 class AlgorithmsAbstract(AlgorithmsInterface):
-    def __init__(self, G, shortest_dist, thresh = 0.0, elev_type = MAXIMIZE, start_node = None, end_node = None):
+    def __init__(self, G, shortest_dist, thresh = 0.0, elevation_mode = MAXIMIZE, start_node = None, end_node = None):
 
         self.G = G
-        self.elev_type = elev_type
+        self.elevation_mode = elevation_mode
         self.thresh = thresh
         self.optimal_path = [[], 0.0, float('-inf'), float('-inf'), EMPTY]
         self.start_node= start_node
         self.end_node =end_node
         self.shortest_path_total_weight = shortest_dist
-        if elev_type == MINIMIZE:
+        if elevation_mode == MINIMIZE:
             self.optimal_path[2] = float('inf')
 
     def setGraph(self, G):
