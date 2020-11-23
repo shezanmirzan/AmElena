@@ -578,8 +578,8 @@
 
             if(map_or_address.innerHTML === "Type Address"){
               var checkedValue = $('.check:checked').val();
-              console.log(document.getElementById('x').value) ;
               var input_data='{"start_location":'+start_loc+',"x":'+document.getElementById('x').value+',"end_location":'+end_loc+',"min_max":"'+checkedValue.toString()+'"}';
+
               $('#loading').show();
               calc_route_reset();
               $.ajax({
@@ -588,7 +588,6 @@
                   data: input_data,
                   success: function(data){
                       $('#loading').hide();
-                      console.log("POST SUCCESS");
                       handleData(data, "route");
                   },
                   dataType: "json"
@@ -596,7 +595,6 @@
             }
             else if(map_or_address.innerHTML === "Select Map"){
               var checkedValue = $('.check:checked').val();
-              console.log(document.getElementById('x').value) ;
               var input_data = {
                 "start_address": document.getElementById("text_start_address").value,
                 "x": document.getElementById('x').value,
@@ -613,7 +611,6 @@
                 data: input_data,
                 success: function(data){
                   $('#loading').hide();
-                  console.log("POST SUCCESS");
                   handleData(data, "route_address");
                 },
                 dataType: "json"
@@ -623,8 +620,5 @@
         };
 
         </script>
-
-        <!-- <script type="text/javascript" src="client_script.js"></script> -->
-
     </body>
 </html>
