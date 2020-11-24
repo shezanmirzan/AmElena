@@ -31,6 +31,7 @@ Please refer to the video presentation for a simple demo involving the project k
 - Factory pattern : to set distance metric ie either Haversine(default), Manhattan or Eucliedean
 - Strategy pattern : to choose different algorithms i.e Djisktra or A-star algorithm
 
+Please refer to the video presentation
 
 
 # Contributors
