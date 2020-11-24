@@ -48,9 +48,9 @@ def get_json(coordinates):
     :return: (file) Json file
     """
     json = {}
-    json["properties"], json["geometry"] = {}, {}
-    json["type"], json["geometry"]["type"] = "Feature", "LineString"
-    json["geometry"]["coordinates"] = coordinates
+    json[PROPERTIES], json[GEOMETRY] = {}, {}
+    json[TYPE], json[GEOMETRY][TYPE] = FEATURE, LINESTRING
+    json[GEOMETRY][COORDINATES] = coordinates
     return json
 
 def update_data(sPath = None, ePath = None, start= None, end= None, null_data = False):
@@ -64,16 +64,16 @@ def update_data(sPath = None, ePath = None, start= None, end= None, null_data = 
     :return: (dict) data to update the UI
     """
     if null_data:
-        data = {"elevation_route": [], "shortest_route": []}
-        data["shortDist"], data["gainShort"], data["dropShort"]= 0, 0, 0
-        data["elenavDist"], data["gainElenav"], data["dropElenav"] = 0, 0,0
-        data["popup_flag"] = 0
+        data = {ELEVATION_ROUTE: [], SHORTEST_ROUTE: []}
+        data[SHORTEST_DIST], data[SHORTEST_GAIN], data[SHORTEST_DROP]= 0, 0, 0
+        data[ELE_DISTANCE], data[ELE_GAIN], data[ELE_DROP] = 0, 0,0
+        data[POPUP_FLAG] = 0
         return data
 
-    data = {"elevation_route": get_json(ePath[0]), "shortest_route": get_json(sPath[0])}
-    data["shortDist"],  data["gainShort"], data["dropShort"]= sPath[1], sPath[2], sPath[3]
-    data["start"], data["end"] = get_address(start), get_address(end)
-    data["elenavDist"], data["gainElenav"], data["dropElenav"] = ePath[1], ePath[2], ePath[3]
+    data = {ELEVATION_ROUTE: get_json(ePath[0]), SHORTEST_ROUTE: get_json(sPath[0])}
+    data[SHORTEST_DIST],  data[SHORTEST_GAIN], data[SHORTEST_DROP]= sPath[1], sPath[2], sPath[3]
+    data[START_ADDRESS], data[END_ADDRESS] = get_address(start), get_address(end)
+    data[ELE_DISTANCE], data[ELE_GAIN], data[ELE_DROP] = ePath[1], ePath[2], ePath[3]
     return data
 
 def get_data(coord_start, coord_end, thres, elevFlag, log=True):
@@ -92,19 +92,21 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     if not all(coord_end):
         print("Wrong end address format or it is outside the selected map area.")
         data = update_data(null_data = True)
-        data["popup_flag"] = -1
+        data[POPUP_FLAG] = -1
         return data
     elif not all(coord_start):
         print("Wrong start address format or it is outside the selected map area.")
         data = update_data(null_data = True)
-        data["popup_flag"] = -1
+        data[POPUP_FLAG] = -1
         return data
 
     if log:
+        print("******************************************")
         print("Start Address: ", get_address(coord_start))
         print("End Address: ", get_address(coord_end))
         print("Percent of Total path: ", thres)
         print("Elevation: ", elevFlag)
+        print("******************************************")
 
     if not init:
         graph_loader = Graph_Loader()
@@ -121,9 +123,9 @@ def get_data(coord_start, coord_end, thres, elevFlag, log=True):
     data = update_data(shortestPath, elevPath, coord_start, coord_end, False)
 
     if len(elevPath[0]) == 0:
-        data["popup_flag"] = 1
+        data[POPUP_FLAG] = 1
     else:
-        data["popup_flag"] = 2
+        data[POPUP_FLAG] = 2
     return data
 
 @app.route('/client')

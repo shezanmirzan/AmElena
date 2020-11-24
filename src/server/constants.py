@@ -42,3 +42,24 @@ Y_COORDINATE = 'y'
 
 #Earth Constants
 DIAMETER = 12742000 # Earth Diameter
+
+# Requesthandler parameters
+FEATURE = "Feature"
+LINESTRING = "LineString"
+
+# RequestHandler attributes
+PROPERTIES = "properties"
+GEOMETRY = "geometry"
+TYPE = "type"
+COORDINATES = "coordinates"
+ELEVATION_ROUTE = "elevation_route"
+SHORTEST_ROUTE = "shortest_route"
+SHORTEST_DIST = "shortDist"
+SHORTEST_GAIN = "gainShort"
+SHORTEST_DROP = "dropShort"
+ELE_DISTANCE = "elenavDist"
+ELE_GAIN = "gainElenav"
+ELE_DROP = "dropElenav"
+POPUP_FLAG = "popup_flag"
+START_ADDRESS = "start"
+END_ADDRESS = "end"
