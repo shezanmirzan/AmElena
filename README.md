@@ -1,5 +1,5 @@
 # AmElena : Elevation Based Navigation System for Amherst, MA, USA
-Elevation-based Navigation (EleNa) is a map based application that gives the user a hiking route between any two points on the map that either minimizes or maximizes the elevation gain and is within “x%” of the shortest path possible where x is user specified.
+We plan to develop a system EleNa, to tell the user a route that maximizes/minimizes the elevation within the user specified limit of the percentage of shortest path, given the start and end locations in the town of Amherst.
 
 # Set-up
 
@@ -21,6 +21,17 @@ Please refer to the video presentation for a simple demo involving the project k
 
 ### Testing 
 - To run the tests run `python test/test.py` from the home directory.
+- Manual UI testing available in ```UI_tests.pdf```
+
+# Learnings
+
+### Design Principles
+- Open/Closed principle : Used ```config.py``` to set configurable parameters eg. API key, map center etc.
+### Design Patterns
+- Factory pattern : to set distance metric ie either Haversine(default), Manhattan or Eucliedean
+- Strategy pattern : to choose different algorithms i.e Djisktra or A-star algorithm
+
+
 
 # Contributors
 
