@@ -34,7 +34,7 @@
 
 
         <div class="sidenav">
-            <img src="{{ url_for('static', filename='Elena_logo1.png') }}" alt="EleNa" class = "logo" />
+            <img src="{{ url_for('static', filename='elena_logo.png') }}" alt="EleNa" class = "logo" />
             <br>
             <button id="map_or_address" class="map_or_address-button">Select Map</button>
 
@@ -88,7 +88,7 @@
         </div>
 
         <div id="loading">
-            <img src="{{ url_for('static', filename='map_loader_updated.gif') }}" alt="Loading...." class = "logo" style="top: 300; left: 800; height: 400; width: 800" />
+            <img src="{{ url_for('static', filename='processing.gif') }}" alt="Loading...." class = "logo" style="top: 300; left: 800; height: 400; width: 800" />
         </div>
 
         <!-- <script type="text/javascript" {{ url_for('static', filename='client_script.js')}}></script> -->
@@ -323,10 +323,10 @@
                     "line-width": 2
                 }
             });
-            console.log("Routes Drawn");
-            fillDataStatistics(data);
+            console.log("Routes now visible");
+            updateRouteStatistics(data);
         }
-        function fillDataStatistics(data){
+        function updateRouteStatistics(data){
           document.getElementById('info').style.height = "300px";
           document.getElementById('start').innerHTML = "Start Location: " + data["start"];
           document.getElementById('end').innerHTML = "End Location: " + data["end"];
