@@ -1,15 +1,15 @@
 import sys
 sys.path.insert(1, sys.path[0][:-5])
-import osmnx as ox
-import networkx as nx
-import pickle as p
-import geopy
 from geopy.geocoders import Nominatim
 
 from src.server.graphLoader import *
-from src.server.algorithms import *
 from src.server.shortestPath import *
 from src.server.requesthandler import get_json, get_data, get_coordinates, get_address
+from src.server.algorithms.algorithms_abstract import *
+from src.server.algorithms.algorithms_interface import *
+from src.server.algorithms.a_star import *
+from src.server.algorithms.djikstra import *
+from src.server.algorithms.edge_weight_calculator import *
 
 def Test(value = ""):
     def temp(function):
@@ -32,9 +32,9 @@ def test_get_graph(end):
     assert isinstance(G, nx.classes.multidigraph.MultiDiGraph)
 
 @Test("")
-def test_get_route(A):
+def test_get_route(D):
     print("Testing get_route method in algorithms.py")
-    c = A.get_route({0 : 1, 1 : 2, 2 : -1}, 0)
+    c = D.get_route({0 : 1, 1 : 2, 2 : -1}, 0)
     assert isinstance(c, list)
     assert c == [2, 1, 0]
 
@@ -72,38 +72,38 @@ def test_get_path_weight(A):
     assert p == [1.414, 4.0, 1.313]
 
 @Test("")
-def test_get_edge_weight(A, node1=0, node2=1):
+def test_get_edge_weight(G, node1=0, node2=1):
     print("Testing get_edge_weight method in algorithms.py")
 
-    c = A.get_edge_weight(1, 0, weight_attribute="normal")
+    c = EdgeWeightCalculator.get_weight(G, 1, 0, weight_type="normal")
     assert isinstance(c, float)
     assert c == 3.0
 
-    c = A.get_edge_weight(0, 3, weight_attribute="elevation_difference")
+    c = EdgeWeightCalculator.get_weight(G, 0, 3, weight_type="elevation_difference")
     assert isinstance(c, float)
     assert c == 3.0
 
-    c = A.get_edge_weight(4, 2, weight_attribute="elevation_difference")
+    c = EdgeWeightCalculator.get_weight(G, 4, 2, weight_type="elevation_difference")
     assert isinstance(c, float)
     assert c == -3.0
 
-    c = A.get_edge_weight(3, 4, weight_attribute="elevation_gain")
+    c = EdgeWeightCalculator.get_weight(G, 3, 4, weight_type="elevation_gain")
     assert isinstance(c, float)
     assert c == 1.0
 
-    c = A.get_edge_weight(4, 1, weight_attribute="elevation_gain")
+    c = EdgeWeightCalculator.get_weight(G, 4, 1, weight_type="elevation_gain")
     assert isinstance(c, float)
     assert c == 0.0
 
-    c = A.get_edge_weight(4, 2, weight_attribute="elevation_drop")
+    c = EdgeWeightCalculator.get_weight(G, 4, 2, weight_type="elevation_drop")
     assert isinstance(c, float)
     assert c == 3.0
 
-    c = A.get_edge_weight(1, 4, weight_attribute="abs")
+    c = EdgeWeightCalculator.get_weight(G, 1, 4, weight_type="abs")
     assert isinstance(c, float)
     assert c == 4.0
 
-    c = A.get_edge_weight(4, 1, weight_attribute="abs")
+    c = EdgeWeightCalculator.get_weight(G, 4, 1, weight_type="abs")
     assert isinstance(c, float)
     assert c == 4.0
 
@@ -111,19 +111,15 @@ def test_get_edge_weight(A, node1=0, node2=1):
 def test_get_shortest_path(startpt, endpt):
     print("Testing get_shortest_path method in shortestPath.py")
     x = 100.0
-
-    # startpt = (42.350541, -72.528715)
-    # endpt = (42.350541, -72.528715)
-    #
     loader = Graph_Loader()
     G = loader.get_graph(endpt)
     A = ShortestPath(G, 100.0)
 
-    shortest_path, best_path = A.get_shortest_path(startpt, endpt, x, elev_type="maximize", log=False)
+    shortest_path, best_path = A.get_shortest_path(startpt, endpt, x, elevation_mode="maximize")
     assert best_path[1] <= (1 + x / 100.0) * shortest_path[1]
     assert best_path[2] >= shortest_path[2]
 
-    shortest_path, best_path = A.get_shortest_path(startpt, endpt, x, elev_type="minimize", log=False)
+    shortest_path, best_path = A.get_shortest_path(startpt, endpt, x, elevation_mode="minimize")
     assert best_path[1] <= (1 + x / 100.0) * shortest_path[1]
     assert best_path[2] <= shortest_path[2]
 
@@ -166,11 +162,11 @@ def test_check_nodes(A):
 def test_resetBestPath(G):
     print("Testing resetBestPath in shortestPath.py")
 
-    S = ShortestPath(G, 100.0,elev_type = "maximize")
+    S = ShortestPath(G, 100.0,elevation_mode = "maximize")
     S.resetBestPath()
     assert S.optimal_path == [[], 0.0, float('-inf'), float('-inf'), "empty"]
 
-    S = ShortestPath(G, 100.0, elev_type="minimize")
+    S = ShortestPath(G, 100.0, elevation_mode="minimize")
     S.resetBestPath()
     assert S.optimal_path == [[], 0.0, float('inf'), float('-inf'), "empty"]
 
@@ -187,7 +183,6 @@ def test_get_address(coordinates):
     print("Testing get_address method in requesthandler.py")
     assert get_address(coordinates) == "University of Massachusetts Amherst, North Pleasant Street, Amherst, Massachusetts, USA -  01003"
 
-
 if __name__ == "__main__":
     start, end = (42.390873, -72.525717), (42.389747, -72.528293)
 
@@ -201,18 +196,22 @@ if __name__ == "__main__":
     for i, e in enumerate(elev):
         G.nodes[i]["elevation"] = e
 
-    A = Algorithms(G, shortest_dist=0.0)
+    Ai = AlgorithmsInterface()
+    A = AlgorithmsAbstract(G, shortest_dist=0.0)
+    djikstra_algo = Djikstra(A, shortest_dist=0.0)
+    astar_algo = AStar(A, shortest_dist=0.0)
+
     S = ShortestPath(G, 100.0)
 
     # Tests #####
     test_get_graph(end)
-    test_check_nodes(A)
-    test_get_route(A)
-    test_get_edge_weight(A)
     test_get_path_weight(A)
-    test_get_shortest_path(start, end)
+    test_check_nodes(A)
+    test_get_route(djikstra_algo)
     test_get_json(start)
     test_get_data(start, end)
-    test_resetBestPath(G)
     test_get_coordinates()
     test_get_address(start)
+    test_get_edge_weight(G)
+    test_get_shortest_path(start, end)
+    test_resetBestPath(G)

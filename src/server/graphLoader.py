@@ -59,7 +59,3 @@ class Graph_Loader:
         pkl.dump( self.G, open( constants.CACHED_MAP_FILENAME, "wb" ) )
         self.cached = True
         self.logger.info("The Graph has been saved")
-
-
-
-

@@ -47,8 +47,6 @@ class AlgorithmsAbstract(AlgorithmsInterface):
             return False
         return True
 
-
-
     @abstractmethod
     def shortest_path(self):
         pass
